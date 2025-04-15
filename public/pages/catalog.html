@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/index.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Arenda56</title>
+  </head>
+  <body>
+    <header class="sticky-header">
+      <div class="header-content">
+        <h1>
+          <a href="/"><img src="img/logo-h.svg" alt="logo" class="logo" /></a>
+        </h1>
+        <nav>
+          <ul>
+            <li><a href="#">Автомобили</a></li>
+            <li><a href="/about">О компании</a></li>
+            <li><a href="/contacts">Контакты</a></li>
+            <li><a href="/profile">Личный кабинет</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section id="cars">
+        <h2>Доступные автомобили</h2>
+        <div id="car-container" class="car-grid">
+          <div class="car-card">
+            <img
+              src="img/range.webp"
+              alt="Land Rover Range Rover 5.0 Supercharged"
+            />
+            <div class="car-card-content">
+              <h3>Land Rover Range Rover 5.0</h3>
+              <p>Идеален для вашего путешествия</p>
+              <button class="btn-gast" onclick="openForm('myForm1')">
+                Забронировать
+              </button>
+              <div class="form-popup" id="myForm1" style="display: none">
+                <form method="POST" class="form-container">
+                  <h1 class="title-form-gast">Забронировать</h1>
+                  <div class="tele-gast">
+                    <label for="phone"><b>Телефон</b></label>
+                    <input
+                      type="text"
+                      placeholder="Введите номер телефона"
+                      name="phone"
+                      required
+                    />
+                  </div>
+                  <input
+                    type="hidden"
+                    name="room_type"
+                    value="Land Rover Range Rover 5.0"
+                  />
+                  <button type="submit" class="btn">Оставить заявку</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="car-card">
+            <img src="img/350f-lex.webp" alt="Lexus RC 350 F-sport AWD" />
+            <div class="car-card-content">
+              <h3>Lexus RC 350 F-sport AWD</h3>
+              <p>Идеален для вашего путешествия</p>
+              <button class="btn-gast" onclick="openForm('myForm1')">
+                Забронировать
+              </button>
+              <div class="form-popup" id="myForm1" style="display: none">
+                <form method="POST" class="form-container">
+                  <h1 class="title-form-gast">Забронировать</h1>
+                  <div class="tele-gast">
+                    <label for="phone"><b>Телефон</b></label>
+                    <input
+                      type="text"
+                      placeholder="Введите номер телефона"
+                      name="phone"
+                      required
+                    />
+                  </div>
+                  <input
+                    type="hidden"
+                    name="room_type"
+                    value="Lexus RC 350 F-sport AWD"
+                  />
+                  <button type="submit" class="btn">Оставить заявку</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="car-card">
+            <img src="img/gs250-lex.webp" alt="Lexus GS250" />
+            <div class="car-card-content">
+              <h3>Lexus GS250</h3>
+              <p>Идеален для вашего путешествия</p>
+              <button class="btn-gast" onclick="openForm('myForm1')">
+                Забронировать
+              </button>
+              <div class="form-popup" id="myForm1" style="display: none">
+                <form method="POST" class="form-container">
+                  <h1 class="title-form-gast">Забронировать</h1>
+                  <div class="tele-gast">
+                    <label for="phone"><b>Телефон</b></label>
+                    <input
+                      type="text"
+                      placeholder="Введите номер телефона"
+                      name="phone"
+                      required
+                    />
+                  </div>
+                  <input type="hidden" name="room_type" value="Lexus GS250" />
+                  <button type="submit" class="btn">Оставить заявку</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="car-card">
+            <img src="img/li7.webp" alt="LIXIANG L7" />
+            <div class="car-card-content">
+              <h3>LIXIANG L7</h3>
+              <p>Идеален для вашего путешествия</p>
+              <button class="btn-gast" onclick="openForm('myForm1')">
+                Забронировать
+              </button>
+              <div class="form-popup" id="myForm1" style="display: none">
+                <form method="POST" class="form-container">
+                  <h1 class="title-form-gast">Забронировать</h1>
+                  <div class="tele-gast">
+                    <label for="phone"><b>Телефон</b></label>
+                    <input
+                      type="text"
+                      placeholder="Введите номер телефона"
+                      name="phone"
+                      required
+                    />
+                  </div>
+                  <input type="hidden" name="room_type" value="LIXIANG L7" />
+                  <button type="submit" class="btn">Оставить заявку</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="car-card">
+            <img src="img/k5.webp" alt="KIA K5" />
+            <div class="car-card-content">
+              <h3>KIA K5</h3>
+              <p>Идеален для вашего путешествия</p>
+              <button class="btn-gast" onclick="openForm('myForm1')">
+                Забронировать
+              </button>
+              <div class="form-popup" id="myForm1" style="display: none">
+                <form method="POST" class="form-container">
+                  <h1 class="title-form-gast">Забронировать</h1>
+                  <div class="tele-gast">
+                    <label for="phone"><b>Телефон</b></label>
+                    <input
+                      type="text"
+                      placeholder="Введите номер телефона"
+                      name="phone"
+                      required
+                    />
+                  </div>
+                  <input type="hidden" name="room_type" value="KIA K5" />
+                  <button type="submit" class="btn">Оставить заявку</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="car-card">
+            <img src="img/mazda6.webp" alt="Mazda 6" />
+            <div class="car-card-content">
+              <h3>Mazda 6</h3>
+              <p>Идеален для вашего путешествия</p>
+              <button class="btn-gast" onclick="openForm('myForm1')">
+                Забронировать
+              </button>
+              <div class="form-popup" id="myForm1" style="display: none">
+                <form class="form-container" id="bookingForm">
+                  <h1 class="title-form-gast">Забронировать</h1>
+                  <div class="tele-gast">
+                    <label for="phone"><b>Телефон</b></label>
+                    <input
+                      type="text"
+                      placeholder="Введите номер телефона"
+                      name="phone"
+                      required
+                    />
+                  </div>
+                  <input type="hidden" name="car" value="mazda6" required />
+                  <button type="submit" class="btn">Оставить заявку</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="info-auto">
+        <div class="rental-info">
+          <h2 class="rental-info-title">Информация об аренде автомобилей</h2>
+          <div class="rental-info-grid">
+            <div class="info-card">
+              <div class="info-icon">📋</div>
+              <h3>Условия аренды</h3>
+              <ul>
+                <li>Возраст от 21 года</li>
+                <li>Стаж вождения от 2 лет</li>
+                <li>Паспорт и водительское удостоверение</li>
+                <li>Залог от 10 000 рублей</li>
+              </ul>
+            </div>
+            <div class="info-card">
+              <div class="info-icon">💳</div>
+              <h3 id="oplata-info">Способы оплаты</h3>
+              <ul>
+                <li>Наличные</li>
+                <li>Банковские карты</li>
+                <li>Безналичный расчет</li>
+                <li>Электронные платежи</li>
+              </ul>
+            </div>
+            <div class="info-card">
+              <div class="info-icon">🚗</div>
+              <h3>Включено в стоимость</h3>
+              <ul>
+                <li>ОСАГО</li>
+                <li>КАСКО</li>
+                <li>Техническое обслуживание</li>
+                <li>Круглосуточная поддержка</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="loginForm">
+          <h2>Авторизация</h2>
+          <form id="loginFormElement">
+            <input type="text" placeholder="Логин" required />
+            <input type="password" placeholder="Пароль" required />
+            <button type="submit" class="submit-btn">Войти</button>
+          </form>
+          <button id="switchToRegister" class="switch-btn">Регистрация</button>
+        </div>
+        <div id="registerForm" style="display: none">
+          <h2>Регистрация</h2>
+          <form id="registerFormElement">
+            <input type="text" placeholder="Имя" required />
+            <input type="email" placeholder="Email" required />
+            <input
+              type="password"
+              id="password"
+              placeholder="Пароль"
+              required
+            />
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Повторите пароль"
+              required
+            />
+            <p id="passwordError" class="error-message" style="display: none">
+              Пароли не совпадают!
+            </p>
+            <button type="submit" class="submit-btn">Зарегистрироваться</button>
+          </form>
+          <button id="switchToLogin" class="switch-btn">Авторизация</button>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <div class="footer-content">
+        <p>&copy; 2024 Arenda56</p>
+        <div class="contact-info">
+          <div class="social-icons">
+            <a href="#"
+              ><img src="img/vk.svg" alt="VK" width="40" height="40"
+            /></a>
+            <a href="#"
+              ><img src="img/tg.svg" alt="Telegram" width="40" height="40"
+            /></a>
+          </div>
+        </div>
+        <p class="phone">+7 (3532) 11-33-44</p>
+      </div>
+    </footer>
+    <!-- <script src="js/main.js"></script> -->
+    <script>
+      // Открытие формы
+      function openForm(formId) {
+        document.getElementById(formId).style.display = "block";
+      }
+
+      // Закрытие формы
+      function closeForm(formId) {
+        document.getElementById(formId).style.display = "none";
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const bookingForm = document.getElementById("bookingForm");
+
+        // Обработчик отправки формы
+        bookingForm.addEventListener("submit", function (event) {
+          event.preventDefault(); // Предотвращаем отправку формы на сервер
+
+          // Закрываем форму
+          const formPopup = document.querySelector(".form-popup");
+          formPopup.style.display = "none";
+
+          // Показываем сообщение об успешной отправке
+          alert(
+            "Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время."
+          );
+        });
+      });
+    </script>
+  </body>
+</html>

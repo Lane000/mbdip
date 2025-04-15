@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/index.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Arenda56</title>
+  </head>
+  <body>
+    <header class="sticky-header">
+      <div class="header-content">
+        <a href="/"><img src="img/logo-h.svg" alt="logo" class="logo" /></a>
+        <nav>
+          <ul>
+            <li><a href="/catalog">Автомобили</a></li>
+            <li><a href="#">О компании</a></li>
+            <li><a href="/contacts">Контакты</a></li>
+            <li><a href="/profile">Личный кабинет</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="about-benefits">
+        <h2 class="about-benefits__title">О компании</h2>
+        <ul class="about-benefits__list">
+          <li class="about-benefits__item">
+            <div class="about-benefits__icon">🚗</div>
+            <h3 class="about-benefits__item-title">Большой автопарк</h3>
+            <p class="about-benefits__description">
+              В нашем автопарке более 50 автомобилей различных классов - от
+              экономичных седанов до премиальных внедорожников. Все автомобили
+              проходят регулярное техническое обслуживание и предоставляются в
+              идеальном состоянии. У нас вы найдете именно тот автомобиль,
+              который подходит под ваши потребности и бюджет.
+            </p>
+          </li>
+          <li class="about-benefits__item">
+            <div class="about-benefits__icon">⭐</div>
+            <h3 class="about-benefits__item-title">10 лет опыта</h3>
+            <p class="about-benefits__description">
+              Мы работаем на рынке аренды автомобилей с 2014 года. За это время
+              более 10 000 клиентов воспользовались нашими услугами и остались
+              довольны сервисом. Наш опыт позволяет предвидеть и решать любые
+              вопросы, связанные с арендой автомобилей, делая ваше
+              взаимодействие с нами максимально комфортным.
+            </p>
+          </li>
+          <li class="about-benefits__item">
+            <div class="about-benefits__icon">💰</div>
+            <h3 class="about-benefits__item-title">Выгодные условия</h3>
+            <p class="about-benefits__description">
+              Предлагаем конкурентные цены, гибкие условия аренды и специальные
+              предложения для постоянных клиентов. Возможна как краткосрочная,
+              так и долгосрочная аренда. При длительной аренде действуют
+              существенные скидки. Также у нас есть специальные тарифы для
+              корпоративных клиентов и программа лояльности.
+            </p>
+          </li>
+          <li class="about-benefits__item">
+            <div class="about-benefits__icon">🛡️</div>
+            <h3 class="about-benefits__item-title">Полная страховка</h3>
+            <p class="about-benefits__description">
+              Все наши автомобили застрахованы по ОСАГО и КАСКО. Вы можете быть
+              уверены в своей безопасности и защите от непредвиденных ситуаций.
+              Страховое покрытие включает все основные риски, а наши специалисты
+              помогут разобраться со всеми формальностями в случае наступления
+              страхового случая.
+            </p>
+          </li>
+        </ul>
+      </section>
+      <section class="reviews-section">
+        <h2 class="rewievs-title">Отзывы наших клиентов</h2>
+        <div class="feedback-container">
+          <h2>Оставьте ваш отзыв</h2>
+
+          <form class="feedback-form" id="feedbackForm">
+            <input type="text" name="name" placeholder="Ваше имя" required />
+            <textarea
+              name="message"
+              placeholder="Ваш отзыв"
+              rows="4"
+              class="feedback-input"
+              required
+            ></textarea>
+            <button type="submit" class="submit-button">Отправить</button>
+          </form>
+          <div class="feedbacks">
+            <h2>Отзывы:</h2>
+            <div id="feedback-list"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <p>&copy; 2024 Arenda56</p>
+        <div class="contact-info">
+          <div class="social-icons">
+            <a href="#"
+              ><img src="img/vk.svg" alt="VK" width="40" height="40"
+            /></a>
+            <a href="#"
+              ><img src="img/tg.svg" alt="Telegram" width="40" height="40"
+            /></a>
+          </div>
+        </div>
+        <p class="phone">+7 (3532) 11-33-44</p>
+      </div>
+    </footer>
+    <script defer src="js/feedback.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

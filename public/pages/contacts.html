@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/index.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Arenda56</title>
+  </head>
+  <body>
+    <header class="sticky-header">
+      <div class="header-content">
+        <a href="/"><img src="img/logo-h.svg" alt="logo" class="logo" /></a>
+        <nav>
+          <ul>
+            <li><a href="/catalog">Автомобили</a></li>
+            <li><a href="/about">О компании</a></li>
+            <li><a href="#">Контакты</a></li>
+            <li><a href="/profile">Личный кабинет</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="support-section">
+        <h2 class="contacts-title">Контакты</h2>
+        <div class="support-cards">
+          <div class="support-card">
+            <div class="support-icon-cont">
+              <img
+                src="img/support.svg"
+                alt="Тех. Поддержка"
+                class="support-icon"
+              />
+            </div>
+            <h3>Техническая поддержка</h3>
+            <p>Круглосуточная помощь по техническим вопросам</p>
+            <div class="support-contacts">
+              <p>Телефон: <a href="tel:+73532113344">+7 (3532) 11-33-44</a></p>
+              <p>
+                Email:
+                <a href="mailto:support@arenda56.ru">support@arenda56.ru</a>
+              </p>
+            </div>
+          </div>
+          <div class="support-card">
+            <div class="support-icon-cont">
+              <img src="img/support2.svg" alt="" class="support-icon" />
+            </div>
+            <h3>Вопросы по бронированию</h3>
+            <p>Все о бронировании авто!</p>
+            <div class="support-contacts">
+              <p>Телефон: <a href="tel:+73532224455">+7 (3532) 22-44-55</a></p>
+              <p>
+                Email:
+                <a href="mailto:booking@arenda56.ru">booking@arenda56.ru</a>
+              </p>
+            </div>
+          </div>
+          <div class="support-card">
+            <div class="support-icon-cont">
+              <img src="img/share.svg" alt="" class="support-icon" />
+            </div>
+            <h3>Соц. сети</h3>
+            <p>Подписывайтесь и узнавайте о акциях первыми!</p>
+            <div class="social-links">
+              <a href="#" class="social-link">
+                <img src="img/vk.svg" alt="VK" width="40px" />
+              </a>
+              <a href="#" class="social-link">
+                <img src="img/tg.svg" alt="TG" width="40px" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="contacts-section">
+        <h2 class="contacts-title">Мы на карте</h2>
+        <div class="contacts-content">
+          <div id="map">
+            <div style="position: relative; overflow: hidden">
+              <a
+                href="https://yandex.ru/maps/48/orenburg/?utm_medium=mapframe&utm_source=maps"
+                style="
+                  color: #eee;
+                  font-size: 12px;
+                  position: absolute;
+                  top: 0px;
+                "
+                >Оренбург</a
+              ><a
+                href="https://yandex.ru/maps/48/orenburg/house/ulitsa_chkalova_11/YUwYdwVkSEEAQFtrfXt3dH9gYA==/?ll=55.124166%2C51.765640&utm_medium=mapframe&utm_source=maps&z=19.71"
+                style="
+                  color: #eee;
+                  font-size: 12px;
+                  position: absolute;
+                  top: 14px;
+                "
+                >Улица Чкалова, 11 — Яндекс Карты</a
+              ><iframe
+                src="https://yandex.ru/map-widget/v1/?ll=55.124166%2C51.765640&mode=whatshere&whatshere%5Bpoint%5D=55.123905%2C51.765511&whatshere%5Bzoom%5D=17&z=19.71"
+                width="1000"
+                height="400"
+                frameborder="1"
+                allowfullscreen="true"
+                style="position: relative"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="loginForm">
+          <h2>Авторизация</h2>
+          <form id="loginFormElement">
+            <input type="text" placeholder="Логин" required />
+            <input type="password" placeholder="Пароль" required />
+            <button type="submit" class="submit-btn">Войти</button>
+          </form>
+          <button id="switchToRegister" class="switch-btn">Регистрация</button>
+        </div>
+        <div id="registerForm" style="display: none">
+          <h2>Регистрация</h2>
+          <form id="registerFormElement">
+            <input type="text" placeholder="Имя" required />
+            <input type="email" placeholder="Email" required />
+            <input
+              type="password"
+              id="password"
+              placeholder="Пароль"
+              required
+            />
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Повторите пароль"
+              required
+            />
+            <p id="passwordError" class="error-message" style="display: none">
+              Пароли не совпадают!
+            </p>
+            <button type="submit" class="submit-btn">Зарегистрироваться</button>
+          </form>
+          <button id="switchToLogin" class="switch-btn">Авторизация</button>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <div class="footer-content">
+        <p>&copy; 2024 Arenda56</p>
+        <div class="contact-info">
+          <div class="social-icons">
+            <a href="#"
+              ><img src="img/vk.svg" alt="VK" width="40" height="40"
+            /></a>
+            <a href="#"
+              ><img src="img/tg.svg" alt="Telegram" width="40" height="40"
+            /></a>
+          </div>
+        </div>
+        <p class="phone">+7 (3532) 11-33-44</p>
+      </div>
+    </footer>
+    <script src="/js/main.js"></script>
+    <script
+      src="https://api-maps.yandex.ru/2.1/?lang=ru_RU"
+      type="text/javascript"
+    ></script>
+  </body>
+</html>
