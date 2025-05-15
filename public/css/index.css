@@ -302,6 +302,24 @@ footer {
   }
 }
 
+.footer-social-icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.footer-social-icons svg {
+  filter: brightness(0) invert(1);
+  color: #ffffff;
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+}
+
+.footer-social-icons a {
+  color: white !important; /* Наследует для SVG */
+}
+
 .footer-bottom {
   text-align: center;
   margin-top: 20px;
@@ -1177,4 +1195,39 @@ input:focus {
   color: green;
   font-weight: bold;
   margin-top: 10px;
+}
+
+#loginLink {
+  display: inline-block;
+  padding: 14px 32px;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--secondary-color) 100%
+  );
+  color: var(--background-color);
+  text-decoration: none;
+  border-radius: 30px;
+  font-family: "Arial", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  min-width: 120px;
+}
+
+#loginLink:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(
+    135deg,
+    var(--accent-color) 0%,
+    var(--secondary-color) 100%
+  );
 }
