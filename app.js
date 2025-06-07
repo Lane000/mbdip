@@ -25,7 +25,7 @@ app.use(session({
 // Регистрация
 app.post('/register', (req, res) => {
     const { username, email, password } = req.body;
-    console.log("Данные для регистрации:", { username, email, password }); // Логирование
+    console.log("Данные для регистрации:", { username, email, password });
 
     if (!username || !email || !password) {
         return res.status(400).json({ success: false, message: 'Все поля обязательны' });
@@ -41,7 +41,7 @@ app.post('/register', (req, res) => {
             console.error("Ошибка при регистрации:", err);
             return res.status(500).json({ success: false, message: 'Ошибка при регистрации' });
         }
-        console.log("Пользователь успешно зарегистрирован, ID:", this.lastID); // Логирование успеха
+        console.log("Пользователь успешно зарегистрирован, ID:", this.lastID);
         res.json({ success: true, userId: this.lastID });
     });
 });

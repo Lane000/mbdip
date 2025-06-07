@@ -1,20 +1,3 @@
-function initMap() {
-  var map = new ymaps.Map("map", {
-    center: [51.825035, 55.135394],
-    zoom: 10,
-  });
-
-  var placemark = new ymaps.Placemark([51.825035, 55.135394], {
-    hintContent: "Мы здесь!",
-    balloonContent: "Наш офис находится здесь.",
-  });
-
-  map.geoObjects.add(placemark);
-}
-
-ymaps.ready(initMap);
-initMap();
-
 function openForm(formId) {
   const form = document.getElementById(formId);
   form.style.display = "block";
