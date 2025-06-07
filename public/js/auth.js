@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Показываем сообщение об успешной регистрации
                     document.getElementById('registrationSuccess').style.display = 'block';
 
-                    // Перезагружаем страницу через 2 секунды
+                    // Перезагружаем страницу через 2 секунду
                     setTimeout(() => {
                         window.location.reload();
                     }, 2000);
