@@ -43,6 +43,11 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 if (data.success) {
                     window.location.reload();
+                    localStorage.setItem('user', JSON.stringify({
+                        isLoggedIn: true,
+                        username: data.username || email.split('@')[0],
+                        email: email
+                    }));
                 } else {
                     alert(data.message);
                 }
@@ -78,6 +83,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.success) {
                     // Показываем сообщение об успешной регистрации
                     document.getElementById('registrationSuccess').style.display = 'block';
+                    localStorage.setItem('user', JSON.stringify({
+                        isLoggedIn: true,
+                        username: username,
+                        email: email
+                    }));
 
                     // Перезагружаем страницу через 2 секунду
                     setTimeout(() => {
