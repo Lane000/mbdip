@@ -116,10 +116,6 @@ section {
   text-align: center;
 }
 
-.catalog-header {
-  font-size: 36px;
-}
-
 :root {
   --primary: #3498db;
   --secondary: #2c3e50;
@@ -332,10 +328,6 @@ body {
 
 .car-content {
   padding: 1.5rem;
-}
-
-.car-header {
-  margin-bottom: 1rem;
 }
 
 .car-title {

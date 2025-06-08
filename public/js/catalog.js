@@ -79,6 +79,14 @@ function renderCars(cars) {
         
         <div class="car-details">
           <div class="car-detail">
+            <span class="car-detail-icon">🎨</span>
+            <div>
+              <div class="car-detail-label">Color</div>
+              <div class="car-detail-value">${car.color}</div>
+            </div>
+          </div>
+          
+          <div class="car-detail">
             <span class="car-detail-icon">⛽</span>
             <div>
               <div class="car-detail-label">Fuel</div>

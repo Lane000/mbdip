@@ -50,7 +50,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
             model TEXT NOT NULL,
             year INTEGER NOT NULL,
             price REAL NOT NULL,
-            mileage INTEGER NOT NULL,
+            
             color TEXT NOT NULL,
             fuelType TEXT NOT NULL,
             transmission TEXT NOT NULL
@@ -65,14 +65,14 @@ const db = new sqlite3.Database('./database.db', (err) => {
 
                     if (row.count === 0) {
                         const cars = [
-                            ['Toyota', 'Camry', 2020, 25000, 30000, 'Black', 'Gasoline', 'Automatic'],
-                            ['Honda', 'Civic', 2019, 20000, 40000, 'White', 'Gasoline', 'Automatic'],
-                            ['Ford', 'Focus', 2018, 15000, 50000, 'Blue', 'Gasoline', 'Manual'],
-                            ['Tesla', 'Model 3', 2021, 45000, 10000, 'Red', 'Electric', 'Automatic'],
-                            ['BMW', 'X5', 2017, 35000, 60000, 'Silver', 'Diesel', 'Automatic']
+                            ['Toyota', 'Camry', 2020, 25000, 'Black', 'Gasoline', 'Automatic'],
+                            ['Honda', 'Civic', 2019, 20000, 'White', 'Gasoline', 'Automatic'],
+                            ['Ford', 'Focus', 2018, 15000, 'Blue', 'Gasoline', 'Manual'],
+                            ['Tesla', 'Model 3', 2021, 45000, 'Red', 'Electric', 'Automatic'],
+                            ['BMW', 'X5', 2017, 35000, 'Silver', 'Diesel', 'Automatic']
                         ];
 
-                        const stmt = db.prepare("INSERT INTO cars (brand, model, year, price, mileage, color, fuelType, transmission) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                        const stmt = db.prepare("INSERT INTO cars (brand, model, year, price, , color, fuelType, transmission) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
                         cars.forEach(car => {
                             stmt.run(car, err => {
