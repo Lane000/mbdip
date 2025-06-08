@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function resetFilters() {
+    document.getElementById('sort').value = '';
     document.getElementById('search').value = '';
     document.querySelectorAll('.filter-input').forEach(input => {
         if (input.tagName === 'SELECT') {
@@ -19,6 +20,28 @@ function resetFilters() {
 }
 
 async function fetchCars() {
+    const sortValue = document.getElementById('sort').value;
+    let sortBy = 'id';
+    let sortOrder = 'ASC';
+
+    switch (sortValue) {
+        case 'price_asc':
+            sortBy = 'price';
+            sortOrder = 'ASC';
+            break;
+        case 'price_desc':
+            sortBy = 'price';
+            sortOrder = 'DESC';
+            break;
+        case 'brand_asc':
+            sortBy = 'brand';
+            sortOrder = 'ASC';
+            break;
+        default:
+            sortBy = 'id';
+            sortOrder = 'ASC';
+    }
+
     const params = {
         search: document.getElementById('search').value,
         minYear: document.getElementById('minYear').value,
@@ -28,9 +51,8 @@ async function fetchCars() {
         color: document.getElementById('color').value,
         fuelType: document.getElementById('fuelType').value,
         transmission: document.getElementById('transmission').value,
-        search: document.getElementById('search')?.value || '',
-        sortBy: 'price',
-        sortOrder: 'DESC'
+        sortBy,
+        sortOrder
     };
 
     const queryString = Object.entries(params)
@@ -52,17 +74,16 @@ function renderCars(cars) {
     const container = document.getElementById('cars-container');
     container.innerHTML = '';
 
-    if (!cars || cars.length === 0) {
+    if (cars.length === 0) {
         container.innerHTML = `
       <div class="empty-state">
         <div class="empty-state-icon">🚗</div>
-        <h3 class="empty-state-title">Не найдено автомобилей по данным параметрам</h3>
+        <h3 class="empty-state-title">Автомобили не найдены</h3>
         <p class="empty-state-text">Попробуйте изменить фильтры</p>
       </div>
     `;
         return;
     }
-
     const carImages = {
         'Kia K5': 'k5.webp',
         'Mazda 6': 'mazda6.webp',
@@ -106,7 +127,7 @@ function renderCars(cars) {
           <div class="car-detail">
             <span class="car-detail-icon">⚙️</span>
             <div>
-              <div class="car-detail-label">Тип коробки передач</div>
+              <div class="car-detail-label">Коробка передач</div>
               <div class="car-detail-value">${car.transmission}</div>
             </div>
           </div>
