@@ -33,16 +33,6 @@ body {
   width: 100%;
 }
 
-/* header {
-  width: 100%;
-  height: 120px;
-  background: #ffffff;
-  border-bottom: 2px solid #e0e0e0;
-  color: #333;
-  
-  text-align: center;
-} */
-
 .logo {
   height: 100px;
   width: auto;
@@ -172,7 +162,14 @@ body {
   font-weight: 400;
 }
 
-/* Filter Section */
+#search {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%237f8c8d' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+  padding-right: 2.5rem;
+}
+
 .filter-section {
   margin: 40px;
   background: white;
@@ -266,7 +263,6 @@ body {
   color: var(--dark);
 }
 
-/* Cars Grid */
 .cars-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -402,7 +398,6 @@ body {
   margin: 0 auto;
 }
 
-/* Responsive Adjustments */
 @media (max-width: 768px) {
   .filter-grid {
     grid-template-columns: 1fr;
@@ -529,16 +524,11 @@ footer {
 }
 
 .footer-social-icons svg {
-  /* filter: brightness(0) invert(1); */
   color: #ffffff;
   width: 24px;
   height: 24px;
   vertical-align: middle;
 }
-
-/* .footer-social-icons a {
-  color: white !important;
-} */
 
 .footer-bottom {
   text-align: center;
@@ -1257,11 +1247,11 @@ label {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 0 2rem; /* Отступы справа и слева внутри формы */
+  padding: 0 2rem;
 }
 
 .feedback-input {
-  width: calc(100% - 1.5rem); /* Учитываем padding */
+  width: calc(100% - 1.5rem);
   padding: 0.75rem;
   border: 2px solid var(--primary-color);
   border-radius: 5px;
@@ -1293,7 +1283,7 @@ label {
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  width: 100%; /* Учитываем padding */
+  width: 100%;
 }
 
 .submit-button:hover {
@@ -1313,7 +1303,6 @@ label {
   color: var(--accent-color);
 }
 
-/* Модальное окно */
 .modal {
   display: none;
   position: fixed;
@@ -1335,7 +1324,6 @@ label {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Крестик закрытия */
 .close {
   position: absolute;
   top: 10px;
@@ -1349,7 +1337,6 @@ label {
   color: var(--secondary-color);
 }
 
-/* Формы */
 form {
   display: flex;
   flex-direction: column;
@@ -1368,7 +1355,6 @@ input:focus {
   outline: none;
 }
 
-/* Кнопки отправки форм */
 .submit-btn {
   background-color: var(--primary-color);
   color: white;
@@ -1383,7 +1369,6 @@ input:focus {
   background-color: var(--secondary-color);
 }
 
-/* Кнопки переключения между формами */
 .switch-btn {
   background-color: transparent;
   color: var(--primary-color);

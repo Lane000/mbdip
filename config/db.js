@@ -2,12 +2,11 @@ const sqlite3 = require('sqlite3').verbose();
 
 const db = new sqlite3.Database('./database.db', (err) => {
     if (err) {
-        console.error('Error connecting to SQLite', err);
+        console.error('Ошибка подключения к SQLite', err);
     } else {
-        console.log('Connected to SQLite database');
+        console.log('Подключено к БД SQLite');
 
         db.serialize(() => {
-            // Создание таблицы для заявок
             db.run(`
                 CREATE TABLE IF NOT EXISTS requests (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -17,7 +16,6 @@ const db = new sqlite3.Database('./database.db', (err) => {
                 )
             `);
 
-            // Создание таблицы для пользователей
             db.run(`
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,7 +26,6 @@ const db = new sqlite3.Database('./database.db', (err) => {
             `);
 
 
-            // Создание таблицы для отзывов
             db.run(`CREATE TABLE IF NOT EXISTS feedbacks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT,
@@ -49,7 +46,6 @@ const db = new sqlite3.Database('./database.db', (err) => {
             `);
         });
         db.serialize(() => {
-            // Проверяем, есть ли уже данные в таблице
             db.get("SELECT COUNT(*) as count FROM cars", (err, row) => {
                 if (err) throw err;
 
@@ -66,12 +62,11 @@ const db = new sqlite3.Database('./database.db', (err) => {
 
                     cars.forEach(car => {
                         stmt.run(car, err => {
-                            if (err) console.error("Error inserting car:", err);
+                            if (err) console.error("Ошибка добавления авто:", err);
                         });
                     });
 
                     stmt.finalize();
-                    console.log("Test cars added to database");
                 }
             });
         });

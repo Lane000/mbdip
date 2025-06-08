@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function resetFilters() {
+    document.getElementById('search').value = '';
     document.querySelectorAll('.filter-input').forEach(input => {
         if (input.tagName === 'SELECT') {
             input.selectedIndex = 0;
@@ -19,7 +20,7 @@ function resetFilters() {
 
 async function fetchCars() {
     const params = {
-        brand: document.getElementById('brand').value,
+        search: document.getElementById('search').value,
         minYear: document.getElementById('minYear').value,
         maxYear: document.getElementById('maxYear').value,
         minPrice: document.getElementById('minPrice').value,
