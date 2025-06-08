@@ -161,5 +161,94 @@ app.post('/feedback', (req, res) => {
     });
 });
 
+// API для получения автомобилей с фильтрацией
+app.get('/api/cars', (req, res) => {
+    const {
+        brand,
+        minYear,
+        maxYear,
+        minPrice,
+        maxPrice,
+        color,
+        fuelType,
+        transmission,
+        search,
+        sortBy = 'id',
+        sortOrder = 'ASC'
+    } = req.query;
+
+    // Начало SQL запроса
+    let sql = "SELECT * FROM cars";
+    const conditions = [];
+    const params = [];
+
+    // Добавляем условия фильтрации
+    if (brand) {
+        conditions.push("brand = ?");
+        params.push(brand);
+    }
+
+    if (color) {
+        conditions.push("color = ?");
+        params.push(color);
+    }
+
+    if (fuelType) {
+        conditions.push("fuelType = ?");
+        params.push(fuelType);
+    }
+
+    if (transmission) {
+        conditions.push("transmission = ?");
+        params.push(transmission);
+    }
+
+    if (minYear) {
+        conditions.push("year >= ?");
+        params.push(minYear);
+    }
+
+    if (maxYear) {
+        conditions.push("year <= ?");
+        params.push(maxYear);
+    }
+
+    if (minPrice) {
+        conditions.push("price >= ?");
+        params.push(minPrice);
+    }
+
+    if (maxPrice) {
+        conditions.push("price <= ?");
+        params.push(maxPrice);
+    }
+
+    if (search) {
+        conditions.push("(brand LIKE ? OR model LIKE ?)");
+        params.push(`%${search}%`, `%${search}%`);
+    }
+
+    // Объединяем условия
+    if (conditions.length > 0) {
+        sql += " WHERE " + conditions.join(" AND ");
+    }
+
+    // Добавляем сортировку
+    const validSortColumns = ['id', 'brand', 'model', 'year', 'price', 'mileage'];
+    const sortColumn = validSortColumns.includes(sortBy) ? sortBy : 'id';
+    const sortDirection = sortOrder.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+
+    sql += ` ORDER BY ${sortColumn} ${sortDirection}`;
+
+    // Выполняем запрос
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ error: "Database error" });
+        }
+        res.json(rows);
+    });
+});
+
 module.exports = app;
 

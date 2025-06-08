@@ -27,24 +27,6 @@ const db = new sqlite3.Database('./database.db', (err) => {
                 )
             `);
 
-            // Создание таблицы для ролей
-            db.run(`
-                CREATE TABLE IF NOT EXISTS roles (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL UNIQUE
-                )
-            `);
-
-            // Создание таблицы для связи пользователей и ролей
-            db.run(`
-                CREATE TABLE IF NOT EXISTS user_roles (
-                    user_id INTEGER,
-                    role_id INTEGER,
-                    PRIMARY KEY (user_id, role_id),
-                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-                    FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
-                )
-            `);
 
             // Создание таблицы для отзывов
             db.run(`CREATE TABLE IF NOT EXISTS feedbacks (
@@ -60,6 +42,48 @@ const db = new sqlite3.Database('./database.db', (err) => {
                 if (err) {
                     console.error('Ошибка при добавлении ролей:', err);
                 }
+            });
+            db.run(`
+            CREATE TABLE IF NOT EXISTS cars (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            brand TEXT NOT NULL,
+            model TEXT NOT NULL,
+            year INTEGER NOT NULL,
+            price REAL NOT NULL,
+            mileage INTEGER NOT NULL,
+            color TEXT NOT NULL,
+            fuelType TEXT NOT NULL,
+            transmission TEXT NOT NULL
+            )
+            `);
+
+            // Добавление тестовых данных
+            db.serialize(() => {
+                // Проверяем, есть ли уже данные в таблице
+                db.get("SELECT COUNT(*) as count FROM cars", (err, row) => {
+                    if (err) throw err;
+
+                    if (row.count === 0) {
+                        const cars = [
+                            ['Toyota', 'Camry', 2020, 25000, 30000, 'Black', 'Gasoline', 'Automatic'],
+                            ['Honda', 'Civic', 2019, 20000, 40000, 'White', 'Gasoline', 'Automatic'],
+                            ['Ford', 'Focus', 2018, 15000, 50000, 'Blue', 'Gasoline', 'Manual'],
+                            ['Tesla', 'Model 3', 2021, 45000, 10000, 'Red', 'Electric', 'Automatic'],
+                            ['BMW', 'X5', 2017, 35000, 60000, 'Silver', 'Diesel', 'Automatic']
+                        ];
+
+                        const stmt = db.prepare("INSERT INTO cars (brand, model, year, price, mileage, color, fuelType, transmission) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+
+                        cars.forEach(car => {
+                            stmt.run(car, err => {
+                                if (err) console.error("Error inserting car:", err);
+                            });
+                        });
+
+                        stmt.finalize();
+                        console.log("Test cars added to database");
+                    }
+                });
             });
         });
     }
