@@ -51,23 +51,31 @@ function renderCars(cars) {
     const container = document.getElementById('cars-container');
     container.innerHTML = '';
 
-    if (cars.length === 0) {
+    if (!cars || cars.length === 0) {
         container.innerHTML = `
       <div class="empty-state">
         <div class="empty-state-icon">🚗</div>
-        <h3 class="empty-state-title">No cars found</h3>
-        <p class="empty-state-text">Try adjusting your filters or reset them</p>
+        <h3 class="empty-state-title">Не найдено автомобилей по данным параметрам</h3>
+        <p class="empty-state-text">Попробуйте изменить фильтры</p>
       </div>
     `;
         return;
     }
 
+    const carImages = {
+        'Kia K5': 'k5.webp',
+        'Mazda 6': 'mazda6.webp',
+        'Lixiang LI7': 'li7.webp',
+        'Lexus 350F': '350f-lex.webp',
+        'Lexus GS250': 'gs250-lex.webp'
+    };
+
     cars.forEach(car => {
-        const card = document.createElement('div');
+        const card = document.createElement('div'); // Добавлено объявление переменной
         card.className = 'car-card';
 
-        const imageNum = Math.floor(Math.random() * 10) + 1;
-        const imageUrl = `https://source.unsplash.com/random/600x400/?car,${car.brand},${car.model},${imageNum}`;
+        const imageName = carImages[`${car.brand} ${car.model}`] || 'default.jpg';
+        const imageUrl = `img/${imageName}`;
 
         card.innerHTML = `
       <div class="car-image" style="background-image: url('${imageUrl}')"></div>
@@ -81,7 +89,7 @@ function renderCars(cars) {
           <div class="car-detail">
             <span class="car-detail-icon">🎨</span>
             <div>
-              <div class="car-detail-label">Color</div>
+              <div class="car-detail-label">Цвет</div>
               <div class="car-detail-value">${car.color}</div>
             </div>
           </div>
@@ -89,7 +97,7 @@ function renderCars(cars) {
           <div class="car-detail">
             <span class="car-detail-icon">⛽</span>
             <div>
-              <div class="car-detail-label">Fuel</div>
+              <div class="car-detail-label">Тип топлива</div>
               <div class="car-detail-value">${car.fuelType}</div>
             </div>
           </div>
@@ -97,14 +105,14 @@ function renderCars(cars) {
           <div class="car-detail">
             <span class="car-detail-icon">⚙️</span>
             <div>
-              <div class="car-detail-label">Transmission</div>
+              <div class="car-detail-label">Тип коробки передач</div>
               <div class="car-detail-value">${car.transmission}</div>
             </div>
           </div>
         </div>
         
         <div class="car-price">
-          ${car.price.toLocaleString()} <span class="car-price-currency">$</span>
+          ${car.price.toLocaleString()} ₽ <span class="car-price-currency">в сутки</span>
         </div>
       </div>
     `;
