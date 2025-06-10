@@ -57,21 +57,61 @@ nav ul li {
   margin: 0 20px;
 }
 
-.hero {
+.banner {
   width: 100%;
-  background-color: var(--primary-color);
-  color: #fff;
-  padding: 60px 20px;
+  max-width: 2560px;
+  height: 500px;
+  background: linear-gradient(rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.7)),
+    url("https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80")
+      no-repeat center center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  border-radius: 8px;
-  margin-bottom: 40px;
+  color: white;
+  position: relative;
+  /* overflow: hidden; */
 }
 
-.hero h2 {
-  font-size: 36px;
+.banner-content {
+  max-width: 800px;
+  padding: 20px;
+  z-index: 2;
+}
+
+.banner h1 {
+  font-size: 3rem;
   margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
+.banner p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.btn-rent {
+  background-color: var(--secondary);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.btn-rent:hover {
+  text-decoration: none;
+  background-color: #1a252f;
+  transform: translateY(-3px);
+}
+/* 
 form input {
   padding: 10px;
   margin: 5px;
@@ -96,7 +136,7 @@ form button:hover {
 section {
   padding: 20px 20px;
   text-align: center;
-}
+} */
 
 :root {
   --primary: #3498db;
@@ -122,44 +162,6 @@ body {
   background-color: var(--light);
   color: var(--dark);
   line-height: 1.6;
-}
-
-.app-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.app-header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.app-title {
-  font-family: "Playfair Display", serif;
-  font-size: 2.8rem;
-  color: var(--secondary);
-  margin-bottom: 0.5rem;
-  position: relative;
-  display: inline-block;
-}
-
-.app-title::after {
-  content: "";
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 4px;
-  background: var(--primary);
-  border-radius: 2px;
-}
-
-.app-subtitle {
-  font-size: 1.1rem;
-  color: var(--gray);
-  font-weight: 400;
 }
 
 #search {
@@ -237,6 +239,7 @@ body {
   padding: 0.9rem 2rem;
   border-radius: var(--border-radius);
   font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
   transition: var(--transition);
   text-transform: uppercase;
@@ -267,6 +270,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2rem;
+  margin-bottom: 40px;
 }
 
 .car-card {
@@ -372,7 +376,6 @@ body {
   color: var(--gray);
 }
 
-/* Empty State */
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
@@ -401,10 +404,6 @@ body {
 @media (max-width: 768px) {
   .filter-grid {
     grid-template-columns: 1fr;
-  }
-
-  .app-title {
-    font-size: 2rem;
   }
 
   .cars-grid {
@@ -660,6 +659,7 @@ a:hover {
   margin: 0 auto;
   padding: 40px;
   text-align: center;
+  margin-bottom: 40px;
 }
 
 .benefits-title {
@@ -724,6 +724,7 @@ a:hover {
 
 .contacts-title {
   font-size: 2rem;
+  margin-top: 40px;
   margin-bottom: 20px;
   text-align: center;
   color: #333;

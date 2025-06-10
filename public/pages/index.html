@@ -30,45 +30,67 @@
         </nav>
       </div>
     </header>
+    <div class="banner">
+      <div class="banner-content">
+        <h1>Аренда премиальных автомобилей</h1>
+        <p>
+          Путешествуйте с комфортом — выберите идеальный автомобиль для вашего
+          путешествия
+        </p>
+        <button class="btn-rent" onclick="window.location.href='/catalog'">
+          Забронировать сейчас
+        </button>
+      </div>
+    </div>
     <main>
-      <section class="hero">
-        <h2>Найдите идеальный автомобиль для вашего путешествия</h2>
-        <div id="booking-form">
-          <a href="/catalog"><button type="submit">Забронировать</button></a>
-        </div>
-      </section>
-      <section id="cars">
+      <section>
         <h2>Доступные автомобили</h2>
-        <div id="car-container" class="car-grid">
-          <div class="car-card">
-            <img
-              src="img/range.webp"
-              alt="Land Rover Range Rover 5.0 Supercharged"
-            />
-            <div class="car-card-content">
-              <h3>Land Rover Range Rover 5.0</h3>
-              <p>Идеален для вашего путешествия</p>
-              <a href="/catalog"><button>Забронировать</button></a>
+
+        <!-- <div
+            class="car-image"
+            style="
+              background-image: url('https://prokatmashin116.ru/photos/big/aa39f19b1d81b3c62bfc2ed344c05520.jpg');
+            "
+          ></div>
+          <div class="car-content"> -->
+        <!-- <div class="car-header">
+              <h3 class="car-title">Mazda 6</h3>
+              <p class="car-subtitle">2021</p>
             </div>
-          </div>
-          <div class="car-card">
-            <img src="img/350f-lex.webp" alt="Lexus RC 350 F-sport AWD" />
-            <div class="car-card-content">
-              <h3>Lexus RC 350 F-sport AWD</h3>
-              <p>Идеален для вашего путешествия</p>
-              <a href="/catalog"><button>Забронировать</button></a>
+
+            <div class="car-details">
+              <div class="car-detail">
+                <span class="car-detail-icon">🎨</span>
+                <div>
+                  <div class="car-detail-label">Цвет</div>
+                  <div class="car-detail-value">Белый</div>
+                </div>
+              </div>
+
+              <div class="car-detail">
+                <span class="car-detail-icon">⛽</span>
+                <div>
+                  <div class="car-detail-label">Тип топлива</div>
+                  <div class="car-detail-value">Бензин</div>
+                </div>
+              </div>
+
+              <div class="car-detail">
+                <span class="car-detail-icon">⚙️</span>
+                <div>
+                  <div class="car-detail-label">Коробка передач</div>
+                  <div class="car-detail-value">Механическая</div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="car-card">
-            <img src="img/gs250-lex.webp" alt="Lexus GS250" />
-            <div class="car-card-content">
-              <h3>Lexus GS250</h3>
-              <p>Идеален для вашего путешествия</p>
-              <a href="/catalog"><button>Забронировать</button></a>
+
+            <div class="car-price">
+              45 0000 ₽ <span class="car-price-currency">в сутки</span>
             </div>
-          </div>
-        </div>
+          </div> -->
       </section>
+
+      <div class="cars-grid" id="cars-container"></div>
       <section class="benefits-section">
         <h2 class="benefits-title">Наши преимущества</h2>
         <div class="benefits-grid">
@@ -115,5 +137,6 @@
       </div>
     </footer>
     <script src="/js/main.js"></script>
+    <script src="/js/index.js"></script>
   </body>
 </html>

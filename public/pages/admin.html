@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Админ-панель</title>
+    <link rel="stylesheet" href="/css/index.css" />
+  </head>
+  <body>
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="loginForm">
+          <h2>Авторизация</h2>
+          <form id="loginFormElement">
+            <input type="text" placeholder="Логин" required />
+            <input type="password" placeholder="Пароль" required />
+            <button type="submit" class="submit-btn">Войти</button>
+          </form>
+          <button id="switchToRegister" class="switch-btn">Регистрация</button>
+        </div>
+      </div>
+    </div>
+    <script src="/js/admin.js"></script>
+  </body>
+</html>

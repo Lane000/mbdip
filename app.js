@@ -132,6 +132,10 @@ app.get('/profile', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'pages', 'lk.html'));
 });
 
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'pages', 'admin.html'));
+});
+
 app.get('/feedbacks/html', (req, res) => {
     db.all('SELECT * FROM feedbacks', [], (err, rows) => {
         if (err) {
