@@ -54,7 +54,7 @@
         </div>
       </main>
     </div>
-    <div id="modal" class="modal">
+    <!-- <div id="modal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
         <div id="loginForm">
@@ -98,6 +98,29 @@
           <button id="switchToLogin" class="switch-btn">Авторизация</button>
         </div>
       </div>
+    </div> -->
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Бронирование автомобиля</h2>
+      <form id="booking-form">
+        <div class="form-group">
+          <label for="booking-name">Ваше имя</label>
+          <input type="text" id="booking-name" required />
+        </div>
+        <div class="form-group">
+          <label for="booking-phone">Телефон</label>
+          <input type="tel" id="booking-phone" required />
+        </div>
+        <div class="form-group">
+          <label for="booking-date">Дата начала бронирования</label>
+          <input type="date" id="booking-start-date" required />
+        </div>
+        <div class="form-group">
+          <label for="booking-date">Дата окончания бронирования</label>
+          <input type="date" id="booking-end-date" required />
+        </div>
+        <button type="submit" class="submit-btn">Подтвердить бронь</button>
+      </form>
     </div>
     <footer>
       <div class="footer-content">
