@@ -184,16 +184,42 @@ function showError(message) {
 // Элементы модального окна
 const modal = document.getElementById('booking-modal');
 const closeBtn = document.querySelector('.close-modal');
+const bookingForm = document.getElementById('booking-form');
 
-// Текущий пользователь (должен быть установлен при авторизации)
+// Текущий пользователь
 let currentUserId = null;
 
+// Проверка авторизации при загрузке страницы
+async function checkAuth() {
+  try {
+    const response = await fetch('/check-auth', {
+      credentials: 'include'
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.success) {
+        currentUserId = data.user.id;
+        console.log('User authenticated, ID:', currentUserId);
+        return true;
+      }
+    }
+    return false;
+  } catch (error) {
+    console.error('Auth check failed:', error);
+    return false;
+  }
+}
+
 // Открытие модального окна
-document.addEventListener('click', (e) => {
+document.addEventListener('click', async (e) => {
   if (e.target.classList.contains('book-btn')) {
     // Проверяем авторизацию
-    if (!currentUserId) {
+    const isAuthenticated = await checkAuth();
+
+    if (!isAuthenticated) {
       alert('Пожалуйста, войдите в систему для бронирования');
+      window.location.href = '/profile';
       return;
     }
 
@@ -209,16 +235,21 @@ document.addEventListener('click', (e) => {
 });
 
 // Закрытие модального окна
-closeBtn.addEventListener('click', closeModal);
-window.addEventListener('click', (e) => e.target === modal && closeModal());
-
 function closeModal() {
   modal.style.display = 'none';
   document.body.style.overflow = 'auto';
+  bookingForm.reset();
+
+  // Удаляем сообщения об ошибках
+  const errorElements = document.querySelectorAll('.date-error');
+  errorElements.forEach(el => el.remove());
 }
 
+closeBtn.addEventListener('click', closeModal);
+window.addEventListener('click', (e) => e.target === modal && closeModal());
+
 // Обработка формы бронирования
-document.getElementById('booking-form').addEventListener('submit', async (e) => {
+bookingForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const carId = modal.dataset.carId;
@@ -227,7 +258,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
 
   // Валидация дат
   if (new Date(dateEnd) < new Date(dateStart)) {
-    showDateError('Дата окончания не может быть раньше даты начала');
+    showError('Дата окончания не может быть раньше даты начала');
     return;
   }
 
@@ -235,7 +266,10 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
     // Отправка данных на сервер
     const response = await fetch('/api/bookings', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
       body: JSON.stringify({
         userId: currentUserId,
         carId,
@@ -244,44 +278,67 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
       })
     });
 
+    const result = await response.json();
+
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Ошибка сервера');
+      throw new Error(result.error || 'Ошибка сервера');
     }
 
-    const result = await response.json();
     alert(`Бронирование #${result.bookingId} успешно создано!`);
     closeModal();
-    e.target.reset();
   } catch (error) {
-    console.error('Ошибка:', error);
-    alert(error.message || 'Ошибка при бронировании. Попробуйте позже.');
+    console.error('Ошибка бронирования:', error);
+    showError(error.message || 'Ошибка при бронировании. Попробуйте позже.');
   }
 });
 
-// Вспомогательные функции
-function showDateError(message) {
+// Показать ошибку
+function showError(message) {
   const errorElement = document.createElement('div');
   errorElement.className = 'date-error';
   errorElement.textContent = message;
+  errorElement.style.color = 'red';
+  errorElement.style.marginTop = '10px';
 
   const dateRange = document.querySelector('.date-range');
   const existingError = dateRange.querySelector('.date-error');
-  if (existingError) existingError.remove();
 
-  dateRange.appendChild(errorElement);
+  if (existingError) {
+    existingError.textContent = message;
+  } else {
+    dateRange.appendChild(errorElement);
+  }
 }
 
-// Установка минимальной даты (сегодня)
-window.addEventListener('DOMContentLoaded', () => {
+// Установка минимальных дат
+function setupDateInputs() {
   const today = new Date().toISOString().split('T')[0];
-  document.getElementById('booking-date-start').min = today;
-  document.getElementById('booking-date-end').min = today;
+  const dateStart = document.getElementById('booking-date-start');
+  const dateEnd = document.getElementById('booking-date-end');
 
-  document.getElementById('booking-date-start').addEventListener('change', function () {
-    document.getElementById('booking-date-end').min = this.value;
+  dateStart.min = today;
+  dateEnd.min = today;
+
+  dateStart.addEventListener('change', function () {
+    dateEnd.min = this.value;
+
+    // Автоматически устанавливаем дату окончания +3 дня
+    if (this.value && !dateEnd.value) {
+      const endDate = new Date(this.value);
+      endDate.setDate(endDate.getDate() + 3);
+      dateEnd.valueAsDate = endDate;
+    }
   });
+}
 
-  // Здесь должен быть код для получения currentUserId (пример):
-  // currentUserId = getCurrentUserId(); 
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+  checkAuth(); // Проверяем авторизацию
+  setupDateInputs(); // Настраиваем поля дат
 });
+
+// Форматирование даты для отображения
+function formatDate(dateString) {
+  const options = { day: 'numeric', month: 'long', year: 'numeric' };
+  return new Date(dateString).toLocaleDateString('ru-RU', options);
+}
