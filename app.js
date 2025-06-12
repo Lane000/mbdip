@@ -254,5 +254,121 @@ app.get('/api/cars', (req, res) => {
     });
 });
 
+// Проверка существования пользователя и автомобиля
+async function checkExists(db, table, id) {
+    return new Promise((resolve, reject) => {
+        db.get(`SELECT id FROM ${table} WHERE id = ?`, [id], (err, row) => {
+            if (err) return reject(err);
+            resolve(!!row);
+        });
+    });
+}
+
+// Эндпоинт для бронирования
+app.post('/api/bookings', async (req, res) => {
+    const { userId, carId, startDate, endDate } = req.body;
+
+    try {
+        // Проверяем существование пользователя и автомобиля
+        const [userExists, carExists] = await Promise.all([
+            checkExists(db, 'users', userId),
+            checkExists(db, 'cars', carId)
+        ]);
+
+        if (!userExists || !carExists) {
+            return res.status(400).json({
+                error: 'Неверные данные',
+                details: {
+                    userExists,
+                    carExists
+                }
+            });
+        }
+
+        // Проверяем доступность автомобиля на эти даты
+        const isAvailable = await new Promise((resolve, reject) => {
+            db.get(
+                `SELECT id FROM bookings 
+         WHERE car_id = ? 
+         AND status = 'active'
+         AND (
+           (start_date BETWEEN ? AND ?) 
+           OR (end_date BETWEEN ? AND ?)
+           OR (? BETWEEN start_date AND end_date)
+           OR (? BETWEEN start_date AND end_date)
+         )`,
+                [carId, startDate, endDate, startDate, endDate, startDate, endDate],
+                (err, row) => {
+                    if (err) return reject(err);
+                    resolve(!row);
+                }
+            );
+        });
+
+        if (!isAvailable) {
+            return res.status(400).json({
+                error: 'Автомобиль уже забронирован на указанные даты'
+            });
+        }
+
+        // Создаем бронирование
+        db.run(
+            `INSERT INTO bookings (user_id, car_id, start_date, end_date) 
+       VALUES (?, ?, ?, ?)`,
+            [userId, carId, startDate, endDate],
+            function (err) {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).json({ error: 'Ошибка базы данных' });
+                }
+                res.json({
+                    bookingId: this.lastID,
+                    message: 'Бронирование успешно создано'
+                });
+            }
+        );
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    }
+});
+
+// Получение списка бронирований
+app.get('/api/bookings', (req, res) => {
+    const { userId, carId, status } = req.query;
+    let query = `SELECT * FROM bookings`;
+    const params = [];
+
+    if (userId || carId || status) {
+        query += ' WHERE';
+        const conditions = [];
+
+        if (userId) {
+            conditions.push(' user_id = ?');
+            params.push(userId);
+        }
+
+        if (carId) {
+            conditions.push(' car_id = ?');
+            params.push(carId);
+        }
+
+        if (status) {
+            conditions.push(' status = ?');
+            params.push(status);
+        }
+
+        query += conditions.join(' AND');
+    }
+
+    db.all(query, params, (err, rows) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Ошибка базы данных' });
+        }
+        res.json(rows);
+    });
+});
+
 module.exports = app;
 

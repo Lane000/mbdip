@@ -1,10 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Инициализация и загрузка автомобилей
   fetchCars();
 
+  // Обработчики событий
   document.getElementById('applyFilters').addEventListener('click', fetchCars);
   document.getElementById('resetFilters').addEventListener('click', resetFilters);
 });
 
+// Сброс фильтров
 function resetFilters() {
   document.getElementById('sort').value = '';
   document.getElementById('search').value = '';
@@ -19,7 +22,36 @@ function resetFilters() {
   fetchCars();
 }
 
+// Загрузка автомобилей с сервера
 async function fetchCars() {
+  const container = document.getElementById('cars-container');
+  if (!container) return;
+
+  // Показываем индикатор загрузки
+  container.innerHTML = '<div class="loading">Загрузка автомобилей...</div>';
+
+  try {
+    // Формируем параметры запроса
+    const params = getFilterParams();
+    const queryString = buildQueryString(params);
+
+    // Выполняем запрос
+    const response = await fetch(`/api/cars?${queryString}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const cars = await response.json();
+    renderCars(cars);
+  } catch (error) {
+    console.error('Error fetching cars:', error);
+    showError('Ошибка загрузки данных. Пожалуйста, попробуйте позже.');
+  }
+}
+
+// Получение параметров фильтрации
+function getFilterParams() {
   const sortValue = document.getElementById('sort').value;
   let sortBy = 'id';
   let sortOrder = 'ASC';
@@ -42,7 +74,7 @@ async function fetchCars() {
       sortOrder = 'ASC';
   }
 
-  const params = {
+  return {
     search: document.getElementById('search').value,
     minYear: document.getElementById('minYear').value,
     maxYear: document.getElementById('maxYear').value,
@@ -54,57 +86,50 @@ async function fetchCars() {
     sortBy,
     sortOrder
   };
+}
 
-  const queryString = Object.entries(params)
+// Формирование строки запроса
+function buildQueryString(params) {
+  return Object.entries(params)
     .filter(([_, value]) => value !== '')
     .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
     .join('&');
-
-  try {
-    const response = await fetch(`/api/cars?${queryString}`);
-    const cars = await response.json();
-    renderCars(cars);
-  } catch (error) {
-    console.error('Error fetching cars:', error);
-    showError('Error loading data');
-  }
 }
 
+// Отрисовка карточек автомобилей
 function renderCars(cars) {
   const container = document.getElementById('cars-container');
-  container.innerHTML = '';
+  if (!container) return;
 
-  if (cars.length === 0) {
+  if (!cars || cars.length === 0) {
     container.innerHTML = `
       <div class="empty-state">
         <div class="empty-state-icon">🚗</div>
         <h3 class="empty-state-title">Автомобили не найдены</h3>
-        <p class="empty-state-text">Попробуйте изменить фильтры</p>
+        <p class="empty-state-text">Попробуйте изменить параметры фильтрации</p>
       </div>
     `;
     return;
   }
-  const carImages = {
-    'Kia K5': 'k5.webp',
-    'Mazda 6': 'mazda6.webp',
-    'Lixiang LI7': 'li7.webp',
-    'Lexus 350F': '350f-lex.webp',
-    'Lexus GS250': 'gs250-lex.webp'
-  };
 
-  cars.forEach(car => {
-    const card = document.createElement('div');
-    card.className = 'car-card';
+  container.innerHTML = cars.map(car => createCarCard(car)).join('');
+}
 
-    const imageName = carImages[`${car.brand} ${car.model}`] || 'default.jpg';
-    const imageUrl = `img/${imageName}`;
+// Создание HTML-карточки автомобиля
+function createCarCard(car) {
+  // Используем изображение из БД или дефолтное, если его нет
+  const imageUrl = car.main_image || 'img/default.jpg';
 
-    card.innerHTML = `
-      <div class="car-image" style="background-image: url('${imageUrl}')"></div>
+  return `
+    <div class="car-card" data-car-id="${car.id}">
+      <div class="car-image" style="background-image: url('${imageUrl}'), url('img/default.jpg')">
+        <img src="${imageUrl}" alt="${car.brand} ${car.model}" loading="lazy" style="display: none;"
+             onerror="this.parentNode.style.backgroundImage = 'url(img/default.jpg)'">
+      </div>
       <div class="car-content">
         <div class="car-header">
           <h3 class="car-title">${car.brand} ${car.model}</h3>
-          <p class="car-subtitle">${car.year}</p>
+          <p class="car-subtitle">${car.year} год</p>
         </div>
         
         <div class="car-details">
@@ -136,20 +161,21 @@ function renderCars(cars) {
         <div class="car-price">
           ${car.price.toLocaleString()} ₽ <span class="car-price-currency">в сутки</span>
         </div>
-        <button class="book-btn">Забронировать</button>
+        <button class="filter-button book-btn" id="book-button">Забронировать</button>
       </div>
-    `;
-
-    container.appendChild(card);
-  });
+    </div>
+  `;
 }
 
+// Показ ошибки
 function showError(message) {
   const container = document.getElementById('cars-container');
+  if (!container) return;
+
   container.innerHTML = `
     <div class="empty-state">
       <div class="empty-state-icon">⚠️</div>
-      <h3 class="empty-state-title">Error</h3>
+      <h3 class="empty-state-title">Ошибка</h3>
       <p class="empty-state-text">${message}</p>
     </div>
   `;
@@ -159,14 +185,23 @@ function showError(message) {
 const modal = document.getElementById('booking-modal');
 const closeBtn = document.querySelector('.close-modal');
 
+// Текущий пользователь (должен быть установлен при авторизации)
+let currentUserId = null;
+
 // Открытие модального окна
 document.addEventListener('click', (e) => {
   if (e.target.classList.contains('book-btn')) {
-    const carCard = e.target.closest('.car-card');
-    const carTitle = carCard.querySelector('.car-title').textContent;
-    const carPrice = carCard.querySelector('.car-price').textContent;
+    // Проверяем авторизацию
+    if (!currentUserId) {
+      alert('Пожалуйста, войдите в систему для бронирования');
+      return;
+    }
 
-    // Можно добавить информацию об авто в модальное окно
+    const carCard = e.target.closest('.car-card');
+    const carId = carCard.dataset.carId;
+    const carTitle = carCard.querySelector('.car-title').textContent;
+
+    modal.dataset.carId = carId;
     modal.querySelector('h2').textContent = `Бронирование ${carTitle}`;
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
@@ -174,38 +209,79 @@ document.addEventListener('click', (e) => {
 });
 
 // Закрытие модального окна
-closeBtn.addEventListener('click', () => {
+closeBtn.addEventListener('click', closeModal);
+window.addEventListener('click', (e) => e.target === modal && closeModal());
+
+function closeModal() {
   modal.style.display = 'none';
   document.body.style.overflow = 'auto';
-});
+}
 
-// Закрытие при клике вне окна
-window.addEventListener('click', (e) => {
-  if (e.target === modal) {
-    modal.style.display = 'none';
-    document.body.style.overflow = 'auto';
+// Обработка формы бронирования
+document.getElementById('booking-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const carId = modal.dataset.carId;
+  const dateStart = document.getElementById('booking-date-start').value;
+  const dateEnd = document.getElementById('booking-date-end').value;
+
+  // Валидация дат
+  if (new Date(dateEnd) < new Date(dateStart)) {
+    showDateError('Дата окончания не может быть раньше даты начала');
+    return;
+  }
+
+  try {
+    // Отправка данных на сервер
+    const response = await fetch('/api/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: currentUserId,
+        carId,
+        startDate: dateStart,
+        endDate: dateEnd
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Ошибка сервера');
+    }
+
+    const result = await response.json();
+    alert(`Бронирование #${result.bookingId} успешно создано!`);
+    closeModal();
+    e.target.reset();
+  } catch (error) {
+    console.error('Ошибка:', error);
+    alert(error.message || 'Ошибка при бронировании. Попробуйте позже.');
   }
 });
 
-// Обработка формы
-document.getElementById('booking-form').addEventListener('submit', (e) => {
-  e.preventDefault();
+// Вспомогательные функции
+function showDateError(message) {
+  const errorElement = document.createElement('div');
+  errorElement.className = 'date-error';
+  errorElement.textContent = message;
 
-  const name = document.getElementById('booking-name').value;
-  const phone = document.getElementById('booking-phone').value;
-  const endDate = document.getElementById('booking-end-date').value;
-  const startDate = document.getElementById('booking-start-date').value;
+  const dateRange = document.querySelector('.date-range');
+  const existingError = dateRange.querySelector('.date-error');
+  if (existingError) existingError.remove();
 
-  // Здесь можно добавить отправку данных на сервер
-  console.log('Бронирование:', { name, phone, startDate, endDate });
+  dateRange.appendChild(errorElement);
+}
 
-  // Показываем подтверждение
-  alert('Ваша заявка на бронирование принята! Мы свяжемся с вами в ближайшее время.');
+// Установка минимальной даты (сегодня)
+window.addEventListener('DOMContentLoaded', () => {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('booking-date-start').min = today;
+  document.getElementById('booking-date-end').min = today;
 
-  // Закрываем модальное окно
-  modal.style.display = 'none';
-  document.body.style.overflow = 'auto';
+  document.getElementById('booking-date-start').addEventListener('change', function () {
+    document.getElementById('booking-date-end').min = this.value;
+  });
 
-  // Очищаем форму
-  e.target.reset();
+  // Здесь должен быть код для получения currentUserId (пример):
+  // currentUserId = getCurrentUserId(); 
 });
