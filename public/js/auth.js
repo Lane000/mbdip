@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.style.display = 'none';
     });
 
-    // Отправка формы авторизации
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const username = loginForm.querySelector('input[type="text"]').value;
@@ -52,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 
-    // Отправка формы регистрации
     registerForm.addEventListener('submit', (e) => {
         e.preventDefault();
         console.log("Форма регистрации отправлена");

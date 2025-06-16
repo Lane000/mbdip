@@ -1,13 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Инициализация и загрузка автомобилей
   fetchCars();
 
-  // Обработчики событий
   document.getElementById('applyFilters').addEventListener('click', fetchCars);
   document.getElementById('resetFilters').addEventListener('click', resetFilters);
 });
 
-// Сброс фильтров
 function resetFilters() {
   document.getElementById('sort').value = '';
   document.getElementById('search').value = '';
@@ -22,20 +19,16 @@ function resetFilters() {
   fetchCars();
 }
 
-// Загрузка автомобилей с сервера
 async function fetchCars() {
   const container = document.getElementById('cars-container');
   if (!container) return;
 
-  // Показываем индикатор загрузки
   container.innerHTML = '<div class="loading">Загрузка автомобилей...</div>';
 
   try {
-    // Формируем параметры запроса
     const params = getFilterParams();
     const queryString = buildQueryString(params);
 
-    // Выполняем запрос
     const response = await fetch(`/api/cars?${queryString}`);
 
     if (!response.ok) {
@@ -50,7 +43,6 @@ async function fetchCars() {
   }
 }
 
-// Получение параметров фильтрации
 function getFilterParams() {
   const sortValue = document.getElementById('sort').value;
   let sortBy = 'id';
@@ -88,7 +80,6 @@ function getFilterParams() {
   };
 }
 
-// Формирование строки запроса
 function buildQueryString(params) {
   return Object.entries(params)
     .filter(([_, value]) => value !== '')
@@ -96,7 +87,6 @@ function buildQueryString(params) {
     .join('&');
 }
 
-// Отрисовка карточек автомобилей
 function renderCars(cars) {
   const container = document.getElementById('cars-container');
   if (!container) return;
@@ -115,9 +105,7 @@ function renderCars(cars) {
   container.innerHTML = cars.map(car => createCarCard(car)).join('');
 }
 
-// Создание HTML-карточки автомобиля
 function createCarCard(car) {
-  // Используем изображение из БД или дефолтное, если его нет
   const imageUrl = car.main_image || 'img/default.jpg';
   const validatedImageUrl = imageUrl.startsWith('http') ? imageUrl : `https://${imageUrl}`;
 
@@ -168,7 +156,6 @@ function createCarCard(car) {
   `;
 }
 
-// Показ ошибки
 function showError(message) {
   const container = document.getElementById('cars-container');
   if (!container) return;
@@ -182,15 +169,12 @@ function showError(message) {
   `;
 }
 
-// Элементы модального окна
 const modal = document.getElementById('booking-modal');
 const closeBtn = document.querySelector('.close-modal');
 const bookingForm = document.getElementById('booking-form');
 
-// Текущий пользователь
 let currentUserId = null;
 
-// Проверка авторизации при загрузке страницы
 async function checkAuth() {
   try {
     const response = await fetch('/check-auth', {
@@ -212,10 +196,8 @@ async function checkAuth() {
   }
 }
 
-// Открытие модального окна
 document.addEventListener('click', async (e) => {
   if (e.target.classList.contains('book-btn')) {
-    // Проверяем авторизацию
     const isAuthenticated = await checkAuth();
 
     if (!isAuthenticated) {
@@ -235,13 +217,11 @@ document.addEventListener('click', async (e) => {
   }
 });
 
-// Закрытие модального окна
 function closeModal() {
   modal.style.display = 'none';
   document.body.style.overflow = 'auto';
   bookingForm.reset();
 
-  // Удаляем сообщения об ошибках
   const errorElements = document.querySelectorAll('.date-error');
   errorElements.forEach(el => el.remove());
 }
@@ -249,7 +229,6 @@ function closeModal() {
 closeBtn.addEventListener('click', closeModal);
 window.addEventListener('click', (e) => e.target === modal && closeModal());
 
-// Обработка формы бронирования
 bookingForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -257,14 +236,12 @@ bookingForm.addEventListener('submit', async (e) => {
   const dateStart = document.getElementById('booking-date-start').value;
   const dateEnd = document.getElementById('booking-date-end').value;
 
-  // Валидация дат
   if (new Date(dateEnd) < new Date(dateStart)) {
     showError('Дата окончания не может быть раньше даты начала');
     return;
   }
 
   try {
-    // Отправка данных на сервер
     const response = await fetch('/api/bookings', {
       method: 'POST',
       headers: {
@@ -288,12 +265,12 @@ bookingForm.addEventListener('submit', async (e) => {
     alert(`Бронирование #${result.bookingId} успешно создано!`);
     closeModal();
   } catch (error) {
+    alert(error)
     console.error('Ошибка бронирования:', error);
     showError(error.message || 'Ошибка при бронировании. Попробуйте позже.');
   }
 });
 
-// Показать ошибку
 function showError(message) {
   const errorElement = document.createElement('div');
   errorElement.className = 'date-error';
@@ -311,7 +288,6 @@ function showError(message) {
   }
 }
 
-// Установка минимальных дат
 function setupDateInputs() {
   const today = new Date().toISOString().split('T')[0];
   const dateStart = document.getElementById('booking-date-start');
@@ -323,7 +299,6 @@ function setupDateInputs() {
   dateStart.addEventListener('change', function () {
     dateEnd.min = this.value;
 
-    // Автоматически устанавливаем дату окончания +3 дня
     if (this.value && !dateEnd.value) {
       const endDate = new Date(this.value);
       endDate.setDate(endDate.getDate() + 3);
@@ -332,13 +307,11 @@ function setupDateInputs() {
   });
 }
 
-// Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
-  checkAuth(); // Проверяем авторизацию
-  setupDateInputs(); // Настраиваем поля дат
+  checkAuth();
+  setupDateInputs();
 });
 
-// Форматирование даты для отображения
 function formatDate(dateString) {
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
   return new Date(dateString).toLocaleDateString('ru-RU', options);
