@@ -232,6 +232,7 @@ window.addEventListener('click', (e) => e.target === modal && closeModal());
 bookingForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
+  const phone = document.getElementById('booking-phone').value;
   const carId = modal.dataset.carId;
   const dateStart = document.getElementById('booking-date-start').value;
   const dateEnd = document.getElementById('booking-date-end').value;
@@ -249,6 +250,7 @@ bookingForm.addEventListener('submit', async (e) => {
       },
       credentials: 'include',
       body: JSON.stringify({
+        phone: phone,
         userId: currentUserId,
         carId,
         startDate: dateStart,

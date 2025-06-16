@@ -47,9 +47,10 @@
                   </div>
                 </div>
               </div>
+              <button id="logoutButton">Выйти</button>
             </div>
           </div>
-          <button id="logoutButton">Выйти</button>
+
           <button
             href="#"
             id="loginLink"
@@ -61,39 +62,6 @@
         </div>
       </main>
     </div>
-    <!-- 
-    <div id="modal" class="modal">
-      <div class="modal-content">
-        <span class="close-modal">&times;</span>
-        <h2 id="title-form">Регистрация</h2>
-        <form id="booking-form">
-          <div class="form-group">
-            <input
-              type="text"
-              id="reg-name"
-              class="first-input"
-              required
-              placeholder=" "
-            />
-            <label for="booking-name">Логин</label>
-          </div>
-          <div class="form-group">
-            <input type="email" id="booking-phone" required placeholder=" " />
-            <label for="booking-phone">E-mail</label>
-          </div>
-          <div class="form-group">
-            <input type="password" id="password" required placeholder=" " />
-            <label for="booking-phone">Пароль</label>
-          </div>
-          <div class="form-group">
-            <input type="password" id="confirmPassword" required />
-            <label for="booking-phone">Повторите пароль</label>
-          </div>
-          <button type="submit" class="submit-btn">Подтвердить бронь</button>
-        </form>
-      </div>
-    </div> -->
-
     <div id="modal" class="modal">
       <div class="modal-content">
         <span class="close-modal">&times;</span>
@@ -108,16 +76,20 @@
               <input type="password" placeholder="" required />
               <label for="password">Пароль</label>
             </div>
-            <button type="submit" class="filter-button">Войти</button>
+            <button type="submit" class="filter-button" id="log-btn">
+              Войти
+            </button>
           </form>
-          <button id="switchToRegister" class="submit-btn">Регистрация</button>
+          <button id="switchToRegister" class="submit-btn">
+            Нет аккаунта? Зарегистрироваться
+          </button>
         </form>
         <div id="registerForm" style="display: none">
           <h2 id="title-form">Регистрация</h2>
           <form id="registerFormElement">
             <div class="form-group">
-              <input type="text-log" placeholder="" required />
-              <label for="text-log">Логин</label>
+              <input type="text-reg" placeholder="" required />
+              <label for="text-reg">Логин</label>
             </div>
             <div class="form-group">
               <input type="email" placeholder="" required />
@@ -129,17 +101,17 @@
             </div>
             <div class="form-group">
               <input
-                type="confirmPassword"
+                type="password"
                 id="confirmPassword"
                 placeholder=""
                 required
               />
-              <label for="confirmPassword">Повторите пароль</label>
+              <label for="password">Повторите пароль</label>
             </div>
             <p id="passwordError" class="error-message" style="display: none">
               Пароли не совпадают!
             </p>
-            <button type="submit" class="filter-button">
+            <button type="submit" class="filter-button" id="reg-btn">
               Зарегистрироваться
             </button>
             <p
@@ -150,11 +122,16 @@
               Регистрация прошла успешно!
             </p>
           </form>
-          <button id="switchToLogin" class="submit-btn">Авторизация</button>
+          <button id="switchToLogin" class="submit-btn">
+            Уже есть аккаунт? Войти
+          </button>
         </div>
       </div>
     </div>
-
+    <div class="account-section">
+      <h2 id="bookings-title">Мои бронирования</h2>
+      <div id="bookings-container"></div>
+    </div>
     <footer>
       <div class="footer-content">
         <p>&copy; 2024 Arenda56</p>
@@ -172,6 +149,6 @@
       </div>
     </footer>
     <script src="js/auth.js"></script>
-    <script src="js/lk.js"></script>
+    <script src="js/userBookings.js"></script>
   </body>
 </html>

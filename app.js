@@ -165,6 +165,62 @@ app.post('/feedback', (req, res) => {
     });
 });
 
+// Маршрут для получения бронирований текущего пользователя
+app.get('/api/my-bookings', (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({ error: 'Необходима авторизация' });
+    }
+
+    const userId = req.session.userId;
+
+    db.all(`
+        SELECT b.id, b.start_date, b.end_date, 
+               c.id as car_id, c.brand, c.model, c.year, c.price, c.main_image
+        FROM bookings b
+        JOIN cars c ON b.car_id = c.id
+        WHERE b.user_id = ?
+        ORDER BY b.start_date DESC
+    `, [userId], (err, bookings) => {
+        if (err) {
+            console.error('Ошибка получения бронирований:', err);
+            return res.status(500).json({ error: 'Ошибка сервера' });
+        }
+
+        res.json(bookings);
+    });
+});
+
+// Маршрут для отмены бронирования
+app.delete('/api/bookings/:id', (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({ error: 'Необходима авторизация' });
+    }
+
+    const bookingId = req.params.id;
+    const userId = req.session.userId;
+
+    // Проверяем, что бронирование принадлежит текущему пользователю
+    db.get('SELECT user_id FROM bookings WHERE id = ?', [bookingId], (err, row) => {
+        if (err) {
+            console.error('Ошибка проверки бронирования:', err);
+            return res.status(500).json({ error: 'Ошибка сервера' });
+        }
+
+        if (!row || row.user_id !== userId) {
+            return res.status(404).json({ error: 'Бронирование не найдено или вам не принадлежит' });
+        }
+
+        db.run('DELETE FROM bookings WHERE id = ?', [bookingId], function (err) {
+            if (err) {
+                console.error('Ошибка удаления бронирования:', err);
+                return res.status(500).json({ error: 'Ошибка сервера' });
+            }
+
+            res.json({ success: true });
+        });
+    });
+});
+
 // API для получения автомобилей с фильтрацией
 app.get('/api/cars', (req, res) => {
     const {
@@ -277,7 +333,11 @@ async function checkExists(db, table, id) {
 
 // Эндпоинт для бронирования
 app.post('/api/bookings', async (req, res) => {
-    const { userId, carId, startDate, endDate } = req.body;
+    const { phone, startDate, endDate, carId, userId } = req.body;
+
+    if (!phone) {
+        return res.status(400).json({ error: 'Номер телефона обязателен' });
+    }
 
     try {
         // Проверяем существование пользователя и автомобиля
@@ -300,14 +360,14 @@ app.post('/api/bookings', async (req, res) => {
         const isAvailable = await new Promise((resolve, reject) => {
             db.get(
                 `SELECT id FROM bookings 
-         WHERE car_id = ? 
-         AND (
-           (start_date BETWEEN ? AND ?) 
-           OR (end_date BETWEEN ? AND ?)
-           OR (? BETWEEN start_date AND end_date)
-           OR (? BETWEEN start_date AND end_date)
-         )`,
-                [carId, startDate, endDate, startDate, endDate, startDate, endDate],
+                WHERE car_id = ? 
+                AND (
+                    (start_date BETWEEN ? AND ?) 
+                    OR (end_date BETWEEN ? AND ?)
+                    OR (? BETWEEN start_date AND end_date)
+                    OR (? BETWEEN start_date AND end_date)
+                )`,
+                [carId, startDate, endDate, startDate, endDate, startDate, endDate], // Исправлено: убрал phone из параметров проверки доступности
                 (err, row) => {
                     if (err) return reject(err);
                     resolve(!row);
@@ -321,11 +381,11 @@ app.post('/api/bookings', async (req, res) => {
             });
         }
 
-        // Создаем бронирование
+        // Создаем бронирование (добавляем phone)
         db.run(
-            `INSERT INTO bookings (user_id, car_id, start_date, end_date) 
-       VALUES (?, ?, ?, ?)`,
-            [userId, carId, startDate, endDate],
+            `INSERT INTO bookings (user_id, car_id, start_date, end_date, phone) 
+            VALUES (?, ?, ?, ?, ?)`, // Добавлен phone
+            [userId, carId, startDate, endDate, phone], // Добавлен phone
             function (err) {
                 if (err) {
                     console.error(err);
@@ -343,8 +403,8 @@ app.post('/api/bookings', async (req, res) => {
     }
 });
 
-// Получение списка бронирований
-app.get('/api/bookings', (req, res) => {
+// // Получение списка бронирований
+app.get('/api/user/bookings', (req, res) => {
     const { userId, carId, status } = req.query;
     let query = `SELECT * FROM bookings`;
     const params = [];
@@ -380,5 +440,125 @@ app.get('/api/bookings', (req, res) => {
     });
 });
 
+// Проверка админских прав
+function checkAdmin(req, res, next) {
+    if (!req.session.userId) {
+        return res.status(401).json({ error: 'Необходима авторизация' });
+    }
+
+    db.get('SELECT role FROM users WHERE id = ?', [req.session.userId], (err, user) => {
+        if (err || !user || user.role !== 1) {
+            return res.status(403).json({ error: 'Доступ запрещен' });
+        }
+        next();
+    });
+}
+
+// Маршруты админ-панели
+app.get('/admin', checkAdmin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'pages', 'admin.html'));
+});
+
+// Получение всех бронирований с информацией о пользователях
+app.get('/api/admin/bookings', checkAdmin, (req, res) => {
+    db.all(`
+        SELECT b.id, b.start_date, b.end_date, b.phone,
+               u.username, u.email,
+               c.brand, c.model, c.year, c.price, c.main_image
+        FROM bookings b
+        JOIN users u ON b.user_id = u.id
+        JOIN cars c ON b.car_id = c.id
+        ORDER BY b.start_date DESC
+    `, (err, bookings) => {
+        if (err) {
+            console.error('Ошибка получения бронирований:', err);
+            return res.status(500).json({
+                error: 'Ошибка сервера',
+                details: err.message // Добавляем детали ошибки
+            });
+        }
+        res.json(bookings);
+    });
+});
+
+// Удаление бронирования (админ)
+app.delete('/api/admin/bookings/:id', checkAdmin, (req, res) => {
+    const bookingId = req.params.id;
+
+    db.run('DELETE FROM bookings WHERE id = ?', [bookingId], function (err) {
+        if (err) {
+            console.error('Ошибка удаления бронирования:', err);
+            return res.status(500).json({ error: 'Ошибка сервера' });
+        }
+        res.json({ success: true });
+    });
+});
+
+// Получение всех автомобилей
+app.get('/api/admin/cars', checkAdmin, (req, res) => {
+    db.all('SELECT * FROM cars ORDER BY id DESC', (err, cars) => {
+        if (err) {
+            console.error('Ошибка получения автомобилей:', err);
+            return res.status(500).json({ error: 'Ошибка сервера' });
+        }
+        res.json(cars);
+    });
+});
+
+// Добавление нового автомобиля
+app.post('/api/admin/cars', checkAdmin, (req, res) => {
+    const { brand, model, year, price, color, fuelType, transmission, main_image } = req.body;
+
+    db.run(
+        `INSERT INTO cars 
+        (brand, model, year, price, color, fuelType, transmission, main_image) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [brand, model, year, price, color, fuelType, transmission, main_image],
+        function (err) {
+            if (err) {
+                console.error('Ошибка добавления автомобиля:', err);
+                return res.status(500).json({ error: 'Ошибка сервера' });
+            }
+            res.json({
+                success: true,
+                carId: this.lastID
+            });
+        }
+    );
+});
+
+// Обновление автомобиля
+app.put('/api/admin/cars/:id', checkAdmin, (req, res) => {
+    const carId = req.params.id;
+    const { brand, model, year, price, color, fuelType, transmission, main_image } = req.body;
+
+    db.run(
+        `UPDATE cars SET 
+        brand = ?, model = ?, year = ?, price = ?, 
+        color = ?, fuelType = ?, transmission = ?, main_image = ?
+        WHERE id = ?`,
+        [brand, model, year, price, color, fuelType, transmission, main_image, carId],
+        function (err) {
+            if (err) {
+                console.error('Ошибка обновления автомобиля:', err);
+                return res.status(500).json({ error: 'Ошибка сервера' });
+            }
+            res.json({ success: true });
+        }
+    );
+});
+
+// Удаление автомобиля
+app.delete('/api/admin/cars/:id', checkAdmin, (req, res) => {
+    const carId = req.params.id;
+
+    db.run('DELETE FROM cars WHERE id = ?', [carId], function (err) {
+        if (err) {
+            console.error('Ошибка удаления автомобиля:', err);
+            return res.status(500).json({ error: 'Ошибка сервера' });
+        }
+        res.json({ success: true });
+    });
+});
 module.exports = app;
 

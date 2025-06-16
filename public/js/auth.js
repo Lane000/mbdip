@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const username = loginForm.querySelector('input[type="text"]').value;
+        const username = loginForm.querySelector('input[type="text-log"]').value;
         const password = loginForm.querySelector('input[type="password"]').value;
 
         fetch('/login', {
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         console.log("Форма регистрации отправлена");
 
-        const username = registerForm.querySelector('input[type="text"]').value;
+        const username = registerForm.querySelector('input[type="text-reg"]').value;
         const email = registerForm.querySelector('input[type="email"]').value;
         const password = registerForm.querySelector('#password').value;
         const confirmPassword = registerForm.querySelector('#confirmPassword').value;
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
             registerForm.reset();
             setTimeout(() => {
                 window.location.reload();
-            }, 2000);
+            }, 800);
         }
     });
 

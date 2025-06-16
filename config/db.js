@@ -1,5 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
-
+const bcrypt = require('bcrypt');
 const db = new sqlite3.Database('./database.db', (err) => {
     if (err) {
         console.error('Ошибка подключения к SQLite', err);
@@ -25,13 +25,31 @@ const db = new sqlite3.Database('./database.db', (err) => {
                 )
             `);
 
-            // db.run(`
-            //     INSERT INTO roles (role) VALUES ('user')
-            // `);
+            db.run(`INSERT OR IGNORE INTO roles (role) VALUES ('admin')`);
+            db.run(`INSERT OR IGNORE INTO roles (role) VALUES ('user')`);
 
-            // db.run(`
-            //     INSERT INTO roles (role) VALUES ('admin')
-            // `);
+            // Проверяем наличие администратора
+            db.get("SELECT COUNT(*) as count FROM users WHERE username = 'admin'", (err, row) => {
+                if (err) {
+                    console.error("Ошибка проверки администратора:", err);
+                    return;
+                }
+
+                if (row.count === 0) {
+                    const adminPassword = bcrypt.hashSync('admin123', 10); // Хэшируем пароль
+                    db.run(
+                        `INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)`,
+                        ['admin', 'admin@example.com', adminPassword, 1],
+                        function (err) {
+                            if (err) {
+                                console.error("Ошибка добавления администратора:", err);
+                            } else {
+                                console.log("Администратор создан. Логин: admin, Пароль: admin123");
+                            }
+                        }
+                    );
+                }
+            });
 
             db.run(`CREATE TABLE IF NOT EXISTS feedbacks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,6 +78,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
                     car_id INTEGER NOT NULL,
                     start_date TEXT NOT NULL,
                     end_date TEXT NOT NULL,
+                    phone TEXT,
                     FOREIGN KEY(user_id) REFERENCES users(id),
                     FOREIGN KEY(car_id) REFERENCES cars(id)
                 )
