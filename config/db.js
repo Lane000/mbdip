@@ -52,8 +52,6 @@ const db = new sqlite3.Database('./database.db', (err) => {
                     car_id INTEGER NOT NULL,
                     start_date TEXT NOT NULL,
                     end_date TEXT NOT NULL,
-                    status TEXT DEFAULT 'active',
-                    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY(user_id) REFERENCES users(id),
                     FOREIGN KEY(car_id) REFERENCES cars(id)
                 )
