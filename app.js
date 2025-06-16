@@ -14,6 +14,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 
+
 // Настройка сессий
 app.use(session({
     secret: 'your-secret-key',
@@ -439,6 +440,43 @@ app.get('/api/user/bookings', (req, res) => {
         res.json(rows);
     });
 });
+// server.js (Node.js пример)
+app.delete('/api/bookings/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        await db.run('DELETE FROM bookings WHERE id = ?', [id]);
+        res.status(200).json({ success: true });
+    } catch (err) {
+        console.error('Ошибка отмены брони:', err);
+        res.status(500).json({ error: 'Ошибка отмены бронирования' });
+    }
+});
+
+// server.js
+app.delete('/api/bookings/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user.id;
+
+        const booking = await db.get(
+            'SELECT * FROM bookings WHERE id = ? AND user_id = ?',
+            [id, userId]
+        );
+
+        if (!booking) {
+            return res.status(403).json({
+                message: 'Бронирование не найдено или вам не принадлежит'
+            });
+        }
+
+        await db.run('DELETE FROM bookings WHERE id = ?', [id]);
+        res.json({ success: true });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Ошибка сервера при отмене бронирования' });
+    }
+});
 
 // Проверка админских прав
 function checkAdmin(req, res, next) {
@@ -548,17 +586,76 @@ app.put('/api/admin/cars/:id', checkAdmin, (req, res) => {
     );
 });
 
-// Удаление автомобиля
-app.delete('/api/admin/cars/:id', checkAdmin, (req, res) => {
-    const carId = req.params.id;
+// GET запрос для получения данных об автомобиле
+app.get('/api/admin/cars/:id', checkAdmin, async (req, res) => {
+    try {
+        const carId = req.params.id;
 
-    db.run('DELETE FROM cars WHERE id = ?', [carId], function (err) {
-        if (err) {
-            console.error('Ошибка удаления автомобиля:', err);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+        // Проверяем, что ID - число
+        if (isNaN(carId)) {
+            return res.status(400).json({ error: "ID должен быть числом" });
         }
-        res.json({ success: true });
-    });
+
+        db.get('SELECT * FROM cars WHERE id = ?', [carId], (err, car) => {
+            if (err) {
+                console.error("Ошибка БД:", err);
+                return res.status(500).json({ error: "Ошибка сервера" });
+            }
+
+            if (!car) {
+                return res.status(404).json({ error: "Автомобиль не найден" });
+            }
+
+            res.json(car); // Возвращаем данные автомобиля
+        });
+    } catch (error) {
+        console.error("Ошибка:", error);
+        res.status(500).json({ error: "Внутренняя ошибка сервера" });
+    }
 });
+
+// Правильный эндпоинт для удаления автомобиля
+app.delete('/api/admin/cars/:id', checkAdmin, async (req, res) => {
+    try {
+        const carId = req.params.id;
+
+        // 1. Проверяем существование автомобиля
+        const car = await new Promise((resolve, reject) => {
+            db.get('SELECT id FROM cars WHERE id = ?', [carId], (err, row) => {
+                if (err) return reject(err);
+                resolve(row);
+            });
+        });
+
+        if (!car) {
+            return res.status(404).json({
+                error: 'Автомобиль не найден',
+                details: `Автомобиль с ID ${carId} не существует`
+            });
+        }
+
+        // 2. Удаляем автомобиль
+        await new Promise((resolve, reject) => {
+            db.run('DELETE FROM cars WHERE id = ?', [carId], function (err) {
+                if (err) return reject(err);
+                resolve();
+            });
+        });
+
+        res.json({
+            success: true,
+            message: `Автомобиль ${carId} успешно удалён`
+        });
+
+    } catch (error) {
+        console.error('Ошибка удаления автомобиля:', error);
+        res.status(500).json({
+            error: 'Ошибка сервера',
+            details: error.message
+        });
+    }
+});
+
+
 module.exports = app;
 

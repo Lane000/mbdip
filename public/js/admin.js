@@ -167,25 +167,81 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Удаление автомобиля
-    function deleteCar(carId) {
-        if (!confirm('Вы уверены, что хотите удалить этот автомобиль?')) return;
+    async function deleteCar(carId) {
+        if (!carId) {
+            showNotification('ID автомобиля не указан', 'error');
+            return;
+        }
 
-        fetch(`/api/admin/cars/${carId}`, {
-            method: 'DELETE',
-            credentials: 'include'
-        })
-            .then(response => {
-                if (!response.ok) throw new Error('Ошибка удаления');
-                return response.json();
-            })
-            .then(() => {
-                loadCars();
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                alert('Не удалось удалить автомобиль');
+        if (!confirm(`Вы уверены, что хотите удалить автомобиль #${carId}?`)) {
+            return;
+        }
+
+        try {
+            // Показываем индикатор загрузки
+            const deleteBtn = document.querySelector(`[data-car-id="${carId}"] .delete-btn`);
+            if (deleteBtn) {
+                deleteBtn.disabled = true;
+                deleteBtn.textContent = 'Удаление...';
+            }
+
+            const response = await fetch(`/api/admin/cars/${carId}`, {
+                method: 'DELETE',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                }
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(
+                    errorData.error ||
+                    errorData.message ||
+                    `Ошибка сервера: ${response.status}`
+                );
+            }
+
+            // Плавное удаление из интерфейса
+            const carElement = document.querySelector(`[data-car-id="${carId}"]`);
+            if (carElement) {
+                carElement.style.opacity = '0';
+                setTimeout(() => carElement.remove(), 300);
+            }
+
+            showNotification(`Автомобиль #${carId} успешно удалён`, 'success');
+
+        } catch (error) {
+            console.error('Ошибка удаления:', error);
+            showNotification(
+                error.message || 'Не удалось удалить автомобиль',
+                'error'
+            );
+        } finally {
+            // Восстанавливаем кнопку в любом случае
+            const deleteBtn = document.querySelector(`[data-car-id="${carId}"] .delete-btn`);
+            if (deleteBtn) {
+                deleteBtn.disabled = false;
+                deleteBtn.textContent = 'Удалить';
+            }
+        }
     }
+
+    // Инициализация обработчиков
+    function initDeleteButtons() {
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const carId = btn.closest('[data-car-id]').dataset.carId;
+                deleteCar(carId);
+            });
+        });
+    }
+
+    // Загрузка данных при открытии страницы
+    document.addEventListener('DOMContentLoaded', () => {
+        initDeleteButtons();
+    });
 
     // Редактирование автомобиля
     function editCar(carId) {

@@ -1,70 +1,97 @@
-document.addEventListener('DOMContentLoaded', function () {
-    fetch('/api/my-bookings', {
-        credentials: 'include'
-    })
-        .then(response => {
-            if (!response.ok) throw new Error('Ошибка сети');
-            return response.json();
-        })
-        .then(bookings => {
-            const bookingsContainer = document.getElementById('bookings-container');
-
-            if (bookings.length === 0) {
-                bookingsContainer.innerHTML = `
-                <div class="no-bookings">
-                    <p>У вас пока нет бронирований</p>
-                    <a href="/catalog" class="btn">Арендовать автомобиль</a>
-                </div>
-            `;
-                return;
-            }
-
-            bookingsContainer.innerHTML = bookings.map(booking => `
-            <div class="booking-card">
-                <img src="${booking.main_image}" alt="${booking.brand} ${booking.model}">
-                <div class="booking-info">
-                    <h3>${booking.brand} ${booking.model} (${booking.year})</h3>
-                    <p><strong>Дата начала:</strong> ${new Date(booking.start_date).toLocaleDateString()}</p>
-                    <p><strong>Дата окончания:</strong> ${new Date(booking.end_date).toLocaleDateString()}</p>
-                    <p><strong>Цена:</strong> ₽${booking.price}</p>
-                    <button class="cancel-booking" data-id="${booking.id}">Отменить бронь</button>
-                </div>
-            </div>
-        `).join('');
-
-            // Обработка отмены бронирования
-            document.querySelectorAll('.cancel-booking').forEach(button => {
-                button.addEventListener('click', function () {
-                    const bookingId = this.getAttribute('data-id');
-                    cancelBooking(bookingId);
-                });
-            });
-        })
-        .catch(error => {
-            console.error('Ошибка:', error);
-            document.getElementById('bookings-container').innerHTML = `
-            <div class="error">Ошибка загрузки бронирований</div>
-        `;
-        });
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await loadUserBookings();
+    } catch (error) {
+        console.error('Ошибка загрузки бронирований:', error);
+        showError('Не удалось загрузить бронирования');
+    }
 });
 
-function cancelBooking(bookingId) {
-    if (!confirm('Вы уверены, что хотите отменить бронирование?')) return;
-
-    fetch(`/api/user/bookings/${bookingId}`, {
-        method: 'DELETE',
+async function loadUserBookings() {
+    const response = await fetch('/api/my-bookings', {
         credentials: 'include'
-    })
-        .then(response => {
-            if (!response.ok) throw new Error('Ошибка отмены бронирования');
-            return response.json();
-        })
-        .then(() => {
-            alert('Бронирование отменено');
-            location.reload(); // Обновляем страницу
-        })
-        .catch(error => {
-            console.error('Ошибка:', error);
-            alert('Не удалось отменить бронирование');
+    });
+
+    if (!response.ok) {
+        throw new Error(await response.text());
+    }
+
+    const bookings = await response.json();
+    renderBookings(bookings);
+}
+
+function renderBookings(bookings) {
+    const container = document.getElementById('bookings-container');
+
+    if (!bookings.length) {
+        container.innerHTML = `
+            <div class="no-bookings">
+                <p>У вас нет активных бронирований</p>
+                <a href="/catalog" class="btn">Перейти в каталог</a>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = bookings.map(booking => `
+        <div class="booking-card" data-booking-id="${booking.id}">
+            <img src="${booking.main_image}" alt="${booking.brand} ${booking.model}">
+            <div class="booking-info">
+                <h3>${booking.brand} ${booking.model} (${booking.year})</h3>
+                <p><strong>Даты:</strong> ${formatDate(booking.start_date)} - ${formatDate(booking.end_date)}</p>
+                <p><strong>Стоимость:</strong> ${booking.price.toLocaleString()} ₽</p>
+                <button class="cancel-btn cancel-booking" data-booking-id="${booking.id}">
+                    Отменить бронь
+                </button>
+            </div>
+        </div>
+    `).join('');
+
+    // Назначаем обработчики
+    document.querySelectorAll('.cancel-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            if (confirm('Вы уверены, что хотите отменить бронирование?')) {
+                try {
+                    await cancelBooking(btn.dataset.bookingId);
+                    // После успешной отмены обновляем список
+                    await loadUserBookings();
+                } catch (error) {
+                    console.error('Ошибка отмены:', error);
+                    alert(error.message);
+                }
+            }
         });
+    });
+}
+
+async function cancelBooking(bookingId) {
+    const response = await fetch(`/api/bookings/${bookingId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Ошибка при отмене бронирования');
+    }
+
+    return response.json();
+}
+
+// Вспомогательные функции
+function formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString('ru-RU');
+}
+
+function showError(message) {
+    const container = document.getElementById('bookings-container');
+    container.innerHTML = `
+        <div class="error">
+            <p>${message}</p>
+            <button onclick="location.reload()">Попробовать снова</button>
+        </div>
+    `;
 }
