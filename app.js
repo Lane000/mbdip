@@ -254,6 +254,17 @@ app.get('/api/cars', (req, res) => {
     });
 });
 
+app.get('/api/cars/index', (req, res) => {
+    const query = 'SELECT * FROM cars LIMIT 3';
+    db.all(query, [], (err, cars) => {
+        if (err) {
+            console.error('Ошибка при запросе к БД:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        res.json(cars);
+    });
+});
+
 // Проверка существования пользователя и автомобиля
 async function checkExists(db, table, id) {
     return new Promise((resolve, reject) => {
@@ -290,7 +301,6 @@ app.post('/api/bookings', async (req, res) => {
             db.get(
                 `SELECT id FROM bookings 
          WHERE car_id = ? 
-         AND status = 'active'
          AND (
            (start_date BETWEEN ? AND ?) 
            OR (end_date BETWEEN ? AND ?)

@@ -7,15 +7,31 @@ const db = new sqlite3.Database('./database.db', (err) => {
         console.log('Подключено к БД SQLite');
 
         db.serialize(() => {
-            // Создание таблиц
             db.run(`
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username TEXT UNIQUE,
                     email TEXT UNIQUE,
-                    password TEXT
+                    password TEXT,
+                    role INTEGER,
+                    FOREIGN KEY (role) REFERENCES roles(id)
                 )
             `);
+
+            db.run(`
+                CREATE TABLE IF NOT EXISTS roles (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    role TEXT
+                )
+            `);
+
+            // db.run(`
+            //     INSERT INTO roles (role) VALUES ('user')
+            // `);
+
+            // db.run(`
+            //     INSERT INTO roles (role) VALUES ('admin')
+            // `);
 
             db.run(`CREATE TABLE IF NOT EXISTS feedbacks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,14 +54,6 @@ const db = new sqlite3.Database('./database.db', (err) => {
             `);
 
             db.run(`
-                CREATE TABLE IF NOT EXISTS admins (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT UNIQUE,
-                    password TEXT
-                )
-            `);
-
-            db.run(`
                 CREATE TABLE IF NOT EXISTS bookings (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER NOT NULL,
@@ -57,13 +65,6 @@ const db = new sqlite3.Database('./database.db', (err) => {
                 )
             `);
 
-            // Добавляем администратора
-            db.run(`
-                INSERT OR IGNORE INTO admins (username, password) 
-                VALUES ('admin', '21232f297a57a5a743894a0e4a801fc3')
-            `);
-
-            // Добавляем тестовые автомобили
             db.get("SELECT COUNT(*) as count FROM cars", (err, row) => {
                 if (err) {
                     console.error("Ошибка проверки автомобилей:", err);
@@ -91,19 +92,18 @@ const db = new sqlite3.Database('./database.db', (err) => {
                         });
                     });
 
-                    stmt.finalize(err => {
-                        if (err) console.error("Ошибка завершения stmt:", err);
+                    // stmt.finalize(err => {
+                    //     if (err) console.error("Ошибка завершения stmt:", err);
 
-                        // Добавляем тестовое бронирование только после успешного добавления авто
-                        db.run(`
-                            INSERT OR IGNORE INTO bookings 
-                            (user_id, car_id, start_date, end_date, status)
-                            SELECT 1, id, '2023-12-01', '2023-12-10', 'active'
-                            FROM cars WHERE brand = 'Kia' AND model = 'K5' LIMIT 1
-                        `, (err) => {
-                            if (err) console.error("Ошибка добавления бронирования:", err);
-                        });
-                    });
+                    //     db.run(`
+                    //         INSERT OR IGNORE INTO bookings 
+                    //         (user_id, car_id, start_date, end_date, status)
+                    //         SELECT 1, id, '2023-12-01', '2023-12-10', 'active'
+                    //         FROM cars WHERE brand = 'Kia' AND model = 'K5' LIMIT 1
+                    //     `, (err) => {
+                    //         if (err) console.error("Ошибка добавления бронирования:", err);
+                    //     });
+                    // });
                 }
             });
         });

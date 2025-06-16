@@ -119,10 +119,11 @@ function renderCars(cars) {
 function createCarCard(car) {
   // Используем изображение из БД или дефолтное, если его нет
   const imageUrl = car.main_image || 'img/default.jpg';
+  const validatedImageUrl = imageUrl.startsWith('http') ? imageUrl : `https://${imageUrl}`;
 
   return `
     <div class="car-card" data-car-id="${car.id}">
-      <div class="car-image" style="background-image: url('${imageUrl}'), url('img/default.jpg')">
+      <div class="car-image" style="background-image: url('${validatedImageUrl}'), url('img/default.jpg')">
         <img src="${imageUrl}" alt="${car.brand} ${car.model}" loading="lazy" style="display: none;"
              onerror="this.parentNode.style.backgroundImage = 'url(img/default.jpg)'">
       </div>
