@@ -656,6 +656,35 @@ app.delete('/api/admin/cars/:id', checkAdmin, async (req, res) => {
     }
 });
 
+// Получение всех отзывов для админки
+app.get('/api/admin/feedbacks', checkAdmin, (req, res) => {
+    db.all('SELECT * FROM feedbacks ORDER BY id DESC', (err, feedbacks) => {
+        if (err) {
+            console.error('Ошибка получения отзывов:', err);
+            return res.status(500).json({ error: 'Ошибка сервера' });
+        }
+        res.json(feedbacks);
+    });
+});
+
+// Удаление отзыва
+app.delete('/api/admin/feedbacks/:id', checkAdmin, (req, res) => {
+    const feedbackId = req.params.id;
+
+    db.run('DELETE FROM feedbacks WHERE id = ?', [feedbackId], function (err) {
+        if (err) {
+            console.error('Ошибка удаления отзыва:', err);
+            return res.status(500).json({ error: 'Ошибка сервера' });
+        }
+
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Отзыв не найден' });
+        }
+
+        res.json({ success: true });
+    });
+});
+
 
 module.exports = app;
 

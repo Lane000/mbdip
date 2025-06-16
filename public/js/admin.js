@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 loadBookings();
             } else if (tabName === 'cars') {
                 loadCars();
+            } else if (tabName === 'feedbacks') {
+                loadFeedbacks();
             }
         });
     });
@@ -60,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ${booking.phone ? `<p><strong>Телефон:</strong> ${booking.phone}</p>` : ''}
                 <p><strong>Дата начала:</strong> ${booking.start_date}</p>
                 <p><strong>Дата окончания:</strong> ${booking.end_date}</p>
-                <p><strong>Цена:</strong> $${booking.price}</p>
+                <p><strong>Цена:</strong> ₽${booking.price}</p>
                 <button class="delete-booking">Удалить бронь</button>
             </div>
         `).join('');
@@ -127,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <img src="${car.main_image}" alt="${car.brand} ${car.model}">
                             <div class="car-info">
                                 <h3>${car.brand} ${car.model} (${car.year})</h3>
-                                <p><strong>Цена:</strong> $${car.price}</p>
+                                <p><strong>Цена:</strong> ₽${car.price}</p>
                                 <p><strong>Цвет:</strong> ${car.color}</p>
                                 <p><strong>Топливо:</strong> ${car.fuelType}</p>
                                 <p><strong>Трансмиссия:</strong> ${car.transmission}</p>
@@ -379,4 +381,109 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.location.href = '/';
             });
     }
+    // Функция загрузки отзывов
+    async function loadFeedbacks() {
+        try {
+            const response = await fetch('/api/admin/feedbacks', {
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка загрузки отзывов');
+            }
+
+            const feedbacks = await response.json();
+            renderFeedbacks(feedbacks);
+        } catch (error) {
+            console.error('Ошибка загрузки отзывов:', error);
+            showError('Не удалось загрузить отзывы');
+        }
+    }
+
+    // Функция отрисовки отзывов
+    function renderFeedbacks(feedbacks) {
+        const container = document.getElementById('feedbacks-container');
+
+        if (!feedbacks || feedbacks.length === 0) {
+            container.innerHTML = '<div class="no-feedbacks">Нет отзывов для отображения</div>';
+            return;
+        }
+
+        container.innerHTML = feedbacks.map(feedback => `
+    <div class="feedback-item" data-feedback-id="${feedback.id}">
+      <div class="feedback-header">
+        <div class="feedback-author">${feedback.name || 'Аноним'}</div>
+        <div class="feedback-actions">
+          <button class="delete-feedback" data-id="${feedback.id}" title="Удалить">
+            <i class="fas fa-trash"></i> Удалить
+          </button>
+        </div>
+      </div>
+      <div class="feedback-content">
+        <p>${feedback.message}</p>
+      </div>
+    </div>
+  `).join('');
+
+        setupFeedbackDeleteButtons();
+    }
+
+    // Функция для удаления отзыва
+    async function deleteFeedback(feedbackId) {
+        if (!confirm('Вы уверены, что хотите удалить этот отзыв?')) return;
+
+        try {
+            const response = await fetch(`/api/admin/feedbacks/${feedbackId}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Ошибка удаления');
+            }
+
+            // Удаляем элемент из DOM
+            const feedbackElement = document.querySelector(`[data-feedback-id="${feedbackId}"]`);
+            if (feedbackElement) {
+                feedbackElement.classList.add('fade-out');
+                setTimeout(() => feedbackElement.remove(), 300);
+            }
+
+            showNotification('Отзыв успешно удалён', 'success');
+        } catch (error) {
+            console.error('Ошибка удаления отзыва:', error);
+            showNotification(error.message || 'Не удалось удалить отзыв', 'error');
+        }
+    }
+
+    // Настройка кнопок удаления
+    function setupFeedbackDeleteButtons() {
+        document.querySelectorAll('.delete-feedback').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const feedbackId = btn.dataset.id;
+                deleteFeedback(feedbackId);
+            });
+        });
+    }
+
+    // Вспомогательная функция для форматирования даты
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ru-RU', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (document.getElementById('feedbacks-tab')) {
+            loadFeedbacks();
+        }
+    });
 });
