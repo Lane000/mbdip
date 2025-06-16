@@ -1,23 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.getElementById('loginFormElement');
-    const registerForm = document.getElementById('registerFormElement');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
     const switchToRegister = document.getElementById('switchToRegister');
     const switchToLogin = document.getElementById('switchToLogin');
     const modal = document.getElementById('modal');
-    const closeModal = document.querySelector('.close');
+    const closeModal = document.querySelector('.close-modal');
     const logoutButton = document.getElementById('logoutButton');
     const loginLink = document.getElementById('loginLink');
 
     switchToRegister.addEventListener('click', (e) => {
         e.preventDefault();
         document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('switchToRegister').style.display = 'none';
         document.getElementById('registerForm').style.display = 'block';
+        document.getElementById('switchToLogin').style.display = 'block';
     });
 
     switchToLogin.addEventListener('click', (e) => {
         e.preventDefault();
         document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('switchToLogin').style.display = 'none';
         document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('switchToRegister').style.display = 'block';
     });
 
     closeModal.addEventListener('click', () => {
