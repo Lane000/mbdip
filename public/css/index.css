@@ -1960,3 +1960,130 @@ input:focus {
     font-size: 14px;
   }
 }
+
+@media (max-width: 768px) {
+  .modal {
+    padding-top: 30px;
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: 20px auto;
+    padding: 20px;
+  }
+
+  #booking-form {
+    gap: 15px;
+  }
+
+  .form-group input {
+    padding: 12px 15px;
+    font-size: 16px;
+  }
+
+  .date-range {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .date-range > div {
+    width: 100%;
+  }
+
+  .submit-btn {
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .form-group label {
+    font-size: 14px;
+    top: 10px;
+    left: 15px;
+  }
+
+  .form-group input:focus + label,
+  .form-group input:not(:placeholder-shown) + label {
+    transform: translateY(-25px) scale(0.85);
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 15px;
+  }
+
+  #title-form {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+
+  .form-group input {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  .submit-btn {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  #booking-name,
+  #booking-phone {
+    padding-left: 40px;
+  }
+
+  .form-group::before {
+    left: 10px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+  .modal {
+    overflow-y: auto;
+  }
+
+  .modal-content {
+    margin: 10px auto;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .filter-button {
+    padding: 0.7rem 1rem;
+    font-size: 13px;
+    gap: 0.3rem;
+  }
+
+  .filter-button svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .filter-actions {
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+  }
+
+  #resetFilters,
+  #applyFilters {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .filter-button {
+    padding: 0.6rem 0.8rem;
+    font-size: 12px;
+  }
+
+  .filter-button svg {
+    width: 12px;
+    height: 12px;
+  }
+}

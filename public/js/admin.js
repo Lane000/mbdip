@@ -206,10 +206,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Плавное удаление из интерфейса
-            const carElement = document.querySelector(`[data-car-id="${carId}"]`);
+            const carElement = document.querySelector(`.car-card[data-id="${carId}"]`);
             if (carElement) {
+                carElement.style.transition = 'opacity 0.3s ease';
                 carElement.style.opacity = '0';
-                setTimeout(() => carElement.remove(), 300);
+                setTimeout(() => {
+                    carElement.remove();
+                }, 300);
             }
 
             showNotification(`Автомобиль #${carId} успешно удалён`, 'success');

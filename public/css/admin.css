@@ -384,3 +384,144 @@ body {
   background: #f9f9f9;
   border-radius: 8px;
 }
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .admin-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    padding: 15px;
+    box-shadow: none;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .sidebar h2 {
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+  }
+
+  .sidebar ul {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    white-space: nowrap;
+  }
+
+  .sidebar li {
+    margin-bottom: 0;
+    margin-right: 8px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  #logoutButton {
+    display: none;
+  }
+
+  .content {
+    padding: 20px 15px;
+  }
+
+  .tab-content h2 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+  }
+
+  /* Адаптация для бронирований */
+  .booking-card {
+    padding: 15px;
+  }
+
+  .booking-card h3 {
+    font-size: 1.1rem;
+  }
+
+  /* Адаптация для автомобилей */
+  .cars-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .add-car-btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  /* Адаптация модального окна */
+  .modal-content {
+    margin: 10% auto;
+    padding: 20px;
+    width: 90%;
+  }
+
+  .form-group input {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .submit-btn {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  /* Адаптация отзывов */
+  .feedback-item {
+    padding: 15px;
+  }
+
+  .feedback-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .feedback-actions {
+    margin-top: 5px;
+  }
+  /* Адаптация карточек бронирований для мобильных */
+  .booking-card {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  .booking-card h3 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+
+  .booking-card p {
+    margin: 5px 0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .booking-card .booking-info-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5px;
+  }
+
+  .booking-card .booking-info-label {
+    font-weight: bold;
+    color: var(--secondary);
+    margin-right: 5px;
+    font-size: 0.8rem;
+  }
+
+  .booking-card .booking-info-value {
+    font-size: 0.85rem;
+  }
+
+  .delete-booking {
+    align-self: flex-end;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    margin-top: 8px;
+  }
+}
