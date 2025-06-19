@@ -1,8 +1,11 @@
+let currentUserId = null;
+
 document.addEventListener('DOMContentLoaded', async function () {
   // Получаем элементы формы
   const feedbackForm = document.getElementById('feedbackForm');
   const feedbackList = document.getElementById('feedbackList');
   const messageInput = document.getElementById('message');
+
 
   // Проверяем, что все элементы существуют
   if (!feedbackForm || !feedbackList || !messageInput) {
@@ -14,15 +17,20 @@ document.addEventListener('DOMContentLoaded', async function () {
   async function checkAuth() {
     try {
       const response = await fetch('/check-auth', {
-        credentials: 'include' // Важно для работы с сессиями
+        credentials: 'include'
       });
 
-      if (!response.ok) return false;
-
-      const data = await response.json();
-      return data.success;
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          currentUserId = data.user.id;
+          console.log('User authenticated, ID:', currentUserId);
+          return true;
+        }
+      }
+      return false;
     } catch (error) {
-      console.error('Ошибка проверки авторизации:', error);
+      console.error('Auth check failed:', error);
       return false;
     }
   }
@@ -60,20 +68,19 @@ document.addEventListener('DOMContentLoaded', async function () {
       }
 
       const formData = new FormData(feedbackForm);
-
       // Отправка отзыв
       const response = await fetch('/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: formData.get('name'),
-          message: formData.get('message')
+          message: formData.get('message'),
+          userId: currentUserId
         }),
         credentials: 'include'
       });
 
       const result = await response.json();
-
       if (!result.success) {
         throw new Error(result.message || 'Ошибка сервера');
       }

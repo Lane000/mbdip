@@ -1,3 +1,43 @@
+async function checkAuth() {
+    try {
+        const response = await fetch('/check-auth', {
+            credentials: 'include'
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                currentUserId = data.user.id;
+                console.log('Пользователь авторизован, ID:', currentUserId);
+                return true;
+            }
+        }
+        return false;
+    } catch (error) {
+        return false;
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const isAuth = await checkAuth();
+
+        const userBookings = document.getElementById('user-bookings');
+        const bookingsTitle = document.getElementById('bookings-title');
+
+        if (!isAuth) {
+            userBookings.style.display = 'none';
+            bookingsTitle.style.display = 'none';
+        } else {
+            await loadUserBookings();
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        showError(error.message);
+    }
+});
+
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         await loadUserBookings();

@@ -21,7 +21,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
             db.run(`
                 CREATE TABLE IF NOT EXISTS roles (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    role TEXT
+                    role TEXT UNIQUE
                 )
             `);
 
@@ -54,7 +54,9 @@ const db = new sqlite3.Database('./database.db', (err) => {
             db.run(`CREATE TABLE IF NOT EXISTS feedbacks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT,
-                message TEXT
+                message TEXT,
+                user_id INTEGER NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
             )`);
 
             db.run(`

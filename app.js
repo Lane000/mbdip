@@ -154,15 +154,16 @@ app.get('/feedbacks/html', (req, res) => {
 
 // Добавление отзыва
 app.post('/feedback', (req, res) => {
-    const { name, message } = req.body;
+    const { name, message, userId } = req.body;
     if (!name || !message) {
         return res.status(400).json({ success: false, message: 'Имя и сообщение обязательны' });
     }
-    db.run('INSERT INTO feedbacks (name, message) VALUES (?, ?)', [name, message], function (err) {
+    db.run('INSERT INTO feedbacks (name, message, user_id) VALUES (?, ?, ?)', [name, message, userId], function (err) {
         if (err) {
+            console.log('Received data:', { name, message, userId });
             return res.status(500).json({ success: false, message: 'Ошибка при добавлении отзыва' });
         }
-        res.json({ success: true, feedback: { id: this.lastID, name, message } });
+        res.json({ success: true, feedback: { id: this.lastID, name, message, userId } });
     });
 });
 
@@ -368,7 +369,7 @@ app.post('/api/bookings', async (req, res) => {
                     OR (? BETWEEN start_date AND end_date)
                     OR (? BETWEEN start_date AND end_date)
                 )`,
-                [carId, startDate, endDate, startDate, endDate, startDate, endDate], // Исправлено: убрал phone из параметров проверки доступности
+                [carId, startDate, endDate, startDate, endDate, startDate, endDate],
                 (err, row) => {
                     if (err) return reject(err);
                     resolve(!row);
@@ -382,11 +383,11 @@ app.post('/api/bookings', async (req, res) => {
             });
         }
 
-        // Создаем бронирование (добавляем phone)
+        // Создаем бронирование
         db.run(
             `INSERT INTO bookings (user_id, car_id, start_date, end_date, phone) 
-            VALUES (?, ?, ?, ?, ?)`, // Добавлен phone
-            [userId, carId, startDate, endDate, phone], // Добавлен phone
+            VALUES (?, ?, ?, ?, ?)`,
+            [userId, carId, startDate, endDate, phone],
             function (err) {
                 if (err) {
                     console.error(err);
@@ -404,7 +405,7 @@ app.post('/api/bookings', async (req, res) => {
     }
 });
 
-// // Получение списка бронирований
+// Получение списка бронирований
 app.get('/api/user/bookings', (req, res) => {
     const { userId, carId, status } = req.query;
     let query = `SELECT * FROM bookings`;
@@ -440,7 +441,7 @@ app.get('/api/user/bookings', (req, res) => {
         res.json(rows);
     });
 });
-// server.js (Node.js пример)
+
 app.delete('/api/bookings/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -452,7 +453,7 @@ app.delete('/api/bookings/:id', async (req, res) => {
     }
 });
 
-// server.js
+
 app.delete('/api/bookings/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -519,7 +520,7 @@ app.get('/api/admin/bookings', checkAdmin, (req, res) => {
     });
 });
 
-// Удаление бронирования (админ)
+// Удаление бронирования
 app.delete('/api/admin/bookings/:id', checkAdmin, (req, res) => {
     const bookingId = req.params.id;
 
